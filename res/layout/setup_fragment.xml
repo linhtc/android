@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableLayout
+        android:padding="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:hint="@string/device_name"
+                android:layout_height="wrap_content"
+                android:id="@+id/custom_name"
+                android:imeOptions="flagNoExtractUi"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:hint="@string/device_ssid"
+                android:layout_height="wrap_content"
+                android:id="@+id/custom_ssid"
+                android:imeOptions="flagNoExtractUi"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:hint="@string/device_pw"
+                android:layout_height="wrap_content"
+                android:id="@+id/custom_pw"
+                android:imeOptions="flagNoExtractUi"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/apply"
+        android:id="@+id/btnSetupApply"/>
+</LinearLayout>

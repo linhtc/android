@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:id="@+id/content_main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" >
+
+        <ImageButton
+            android:id="@+id/btnTV"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_up"
+            android:src="@drawable/television" />
+
+        <ImageButton
+            android:id="@+id/btnAirCondition"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/air_conditioner" />
+
+        <ImageButton
+            android:id="@+id/btnMicrowave"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/microwave_oven" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" >
+
+        <ImageButton
+            android:id="@+id/btnLaundry"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/laundry_machine" />
+
+        <ImageButton
+            android:id="@+id/btnDishWasher"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_up"
+            android:src="@drawable/dishwasher" />
+
+        <ImageButton
+            android:id="@+id/btnRefrigerator"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/refrigerator" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="1" >
+
+        <ImageButton
+            android:id="@+id/btnCooker"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/toaster" />
+
+        <ImageButton
+            android:id="@+id/btnSwitch"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_up"
+            android:src="@drawable/plug" />
+
+        <ImageButton
+            android:id="@+id/btnFan"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/fan" />
+
+    </TableRow>
+
+</TableLayout>

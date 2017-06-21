@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">LinHomes</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="navigation_item_1">Home</string>
+    <string name="navigation_item_2">Events</string>
+    <string name="starred_string">Starred</string>
+    <string name="inbox_string">Inbox</string>
+    <string name="sent_mail_string">Sent mail</string>
+    <string name="draft_string">Drafts</string>
+    <string name="subheader">Subheader</string>
+    <string name="trash_string">Trash</string>
+    <string name="all_mail_string">All mails</string>
+    <string name="spam_string">Spams</string>
+    <string name="closeDrawer">Navigation View</string>
+    <string name="openDrawer">Navigation View Closed</string>
+
+    <string name="apply">Áp dụng</string>
+    <string name="processing">Đang thực hiện...</string>
+    <string name="device_name">Tên thiết bị</string>
+    <string name="device_ssid">Tên Wifi (SSID)</string>
+    <string name="device_pw">Mật khẩu</string>
+</resources>
