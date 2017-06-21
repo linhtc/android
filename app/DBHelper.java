@@ -32,7 +32,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "create table devices (" +
-                "device_name text primary key, ws text, wp text, wi text, fcm text, sta int" +
+                "device_name text primary key, custom_name text, ws text, wp text, wi text, fcm text, sta int, sty int" +
         ");";
         db.execSQL(query);
     }
@@ -44,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertDevice (String firebase, String ap_ssid, String ap_pw, String ap_ip, String device_name) {
+    public boolean insertDevice (String firebase, String ap_ssid, String ap_pw, String ap_ip, String device_name, Integer style) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("fcm", firebase);
@@ -52,7 +52,9 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("wp", ap_pw);
         contentValues.put("wi", ap_ip);
         contentValues.put("device_name", device_name);
+        contentValues.put("custom_name", device_name);
         contentValues.put("sta", 0);
+        contentValues.put("sty", style);
         db.insert("devices", null, contentValues);
         return true;
     }
@@ -84,14 +86,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public boolean updateDevice (Integer id, String ip, String cat, String name, String path) {
+    public boolean updateDevice (String device_name, String custom_name, String ssid, String pw) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("ip", ip);
-        contentValues.put("cat", cat);
-        contentValues.put("name", name);
-        contentValues.put("path", path);
-        db.update("devices", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
+        contentValues.put("custom_name", custom_name);
+        contentValues.put("ws", ssid);
+        contentValues.put("wp", pw);
+        db.update("devices", contentValues, "device_name = ? ", new String[] { device_name } );
         return true;
     }
 
@@ -120,6 +121,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 array_list.add(res.getString(0));
                 //Do something Here with values
 
+            }while(res.moveToNext());
+        }
+        Log.e("Websocket", "============> json response err: "+array_list.toString());
+        res.close();
+        return array_list;
+    }
+
+    public ArrayList<String> getAllDevices(Integer style) {
+        ArrayList<String> array_list = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select custom_name from devices where sty = ?", new String[] { Integer.toString(style) } );
+        if(res.moveToFirst()){
+            do{
+                array_list.add(res.getString(res.getColumnIndex("custom_name")));
             }while(res.moveToNext());
         }
         Log.e("Websocket", "============> json response err: "+array_list.toString());

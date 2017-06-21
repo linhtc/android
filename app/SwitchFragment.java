@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,12 +18,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -78,11 +81,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     Log.e(TAG, "===========> CookerFragment key back!");
-//                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                    getFragmentManager().popBackStack();
-
                     HomeFragment fragment = new HomeFragment();
-                    android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.frame, fragment);
                     fragmentTransaction.commit();
                     return true;
@@ -94,7 +94,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
         DBHelper mydb;
         mydb = new DBHelper(getActivity());
-        ArrayList devices = mydb.getAllDevices();
+        ArrayList devices = mydb.getAllDevices(1);
         Log.e("Websocket", "============> devices: "+devices.toString());
 
         if(devices.size() < 1){
@@ -104,6 +104,21 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
         ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
         ListView listView = (ListView) v.findViewById(R.id.device_list);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                Toast.makeText(getActivity().getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
+                String item = (String)parent.getItemAtPosition(position);
+                Log.e("Websocket", "============> item clicked: " + item);
+                Bundle arguments = new Bundle();
+                arguments.putString("device_name", item);
+                DeviceFragment fragment = new DeviceFragment();
+                fragment.setArguments(arguments);
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.commit();
+            }
+        });
 
         ((MainActivity) getActivity()).setActionBarTitle("SWITCH DEVICES");
 
@@ -333,11 +348,11 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
                     DBHelper mydb;
                     mydb = new DBHelper(getActivity());
-                    boolean ins = mydb.insertDevice("", "", "", "", finalSSID);
+                    boolean ins = mydb.insertDevice("", "", "", "", finalSSID, 1);
                     if(ins){
                         mWebSocketClient.close();
                         SetupFragment fragment = new SetupFragment();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragment);
                         fragmentTransaction.commit();
                     }
@@ -366,142 +381,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
             }
         };
         mWebSocketClient.connect();
-    }
-
-    public String getPostDataString(JSONObject params) throws Exception {
-
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
-        }
-//        return params.toString();
-        return result.toString();
-    }
-
-    public void readStream(InputStream is){
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-            Log.e(TAG, "===================> Wifi response: "+sb.toString());
-        } catch (Exception exx){
-            Log.e(TAG, "===================> Wifi response: "+exx.getMessage());
-        }
-    }
-
-    public class getDeviceInfo extends AsyncTask<String, Void, String> {
-
-        protected void onPreExecute(){}
-
-        protected String doInBackground(String... arg0) {
-
-            try {
-
-                URL url = new URL("http://192.168.4.1/"); // here is your URL path
-
-                JSONObject postDataParams = new JSONObject();
-                postDataParams.put("command", "1");
-                postDataParams.put("message", "Hi there");
-                Log.e("params", postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                String request = getPostDataString(postDataParams);
-                System.out.print(request);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(request);
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode=conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    StringBuffer sb = new StringBuffer("");
-                    String line="";
-
-                    while((line = in.readLine()) != null) { sb.append(line); break; }
-
-                    Log.e(TAG, "===================> "+ sb.toString());
-
-                    in.close();
-                    return sb.toString();
-
-                } else {
-                    return new String("false : "+responseCode);
-                }
-            }
-            catch(Exception e){
-                return new String("Exception: " + e.getMessage());
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.e(TAG, "===================> Server response: "+ result);
-            try{
-                if(finalSSID != ""){
-                    JSONObject response = new JSONObject(result);
-
-                    DBHelper mydb;
-                    mydb = new DBHelper(getActivity());
-                    if(!mydb.checkExistDevice(finalSSID)){
-                        // insert device to db
-                        mydb.insertDevice(
-                                response.getString("firebase"), response.getString("ap_ssid"),
-                                response.getString("ap_pw"), response.getString("ap_ip"), response.getString("device_name")
-                        );
-                    } else{
-                        // update device to db
-                    }
-                }
-
-            } catch (Exception e){
-                Log.e(TAG, "===================> Server response e: "+ e.getMessage());
-                dialogLoading.dismiss();
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Không kết nối được")
-                        .setMessage("Hãy khởi động máy, thiết bị và thử lại")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                builder.create().show();
-            }
-        }
     }
 
     private void buildAlertMessageNoGps() {

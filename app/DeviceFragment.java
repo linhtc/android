@@ -1,21 +1,9 @@
 package com.android4dev.navigationview;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,44 +13,28 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Admin on 04-06-2015.
  */
-public class SetupFragment extends Fragment implements View.OnClickListener {
+public class DeviceFragment extends Fragment implements View.OnClickListener {
 
     ProgressDialog dialogLoading;
     private static final String TAG = "MainActivity";
     WebSocketClient mWebSocketClient;
     String deviceName;
-    EditText customName;
+    TextView customName;
     EditText customSSID;
     EditText customPw;
     int state = 0;
@@ -72,7 +44,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.setup_fragment,container,false);
+        View v = inflater.inflate(R.layout.device_fragment,container,false);
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
@@ -93,31 +65,17 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        db = new DBHelper(getActivity());
-        Cursor device = db.getDeviceToSetup();
-        if(device.moveToFirst()){
-            int sta = device.getInt(device.getColumnIndex("sta"));
-            style = device.getInt(device.getColumnIndex("sty"));
-            if(sta == 0){
-                Log.e("Websocket", "connect to ws");
-                connectWebSocket();
-            }
-
-            deviceName = device.getString(device.getColumnIndex("device_name"));
-            String optionName = device.getString(device.getColumnIndex("custom_name"));
-            String deviceSSID = device.getString(device.getColumnIndex("ws"));
-            String devicePw = device.getString(device.getColumnIndex("wp"));
-            customName = (EditText)v.findViewById(R.id.custom_name);
-            customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
-            customSSID = (EditText)v.findViewById(R.id.custom_ssid);
-            customSSID.setHint(getResources().getString(R.string.device_ssid)+ ": "+deviceSSID);
-            customPw = (EditText)v.findViewById(R.id.custom_pw);
-            customPw.setHint(getResources().getString(R.string.device_pw)+ ": "+devicePw);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            deviceName = bundle.getString("device_name");
         }
+        Log.e("Websocket", "============> deviceName: " + deviceName);
+        customName = (TextView)v.findViewById(R.id.custom_name);
+        customName.setText(deviceName);
+
 
         ((MainActivity) getActivity()).setActionBarTitle("SETUP DEVICES");
-        Button btnSetupApply = (Button) v.findViewById(R.id.btnSetupApply);
-        btnSetupApply.setOnClickListener(this);
+
         return v;
     }
 

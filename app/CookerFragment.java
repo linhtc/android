@@ -482,7 +482,7 @@ public class CookerFragment extends Fragment implements View.OnClickListener {
                         // insert device to db
                         mydb.insertDevice(
                                 response.getString("firebase"), response.getString("ap_ssid"),
-                                response.getString("ap_pw"), response.getString("ap_ip"), response.getString("device_name")
+                                response.getString("ap_pw"), response.getString("ap_ip"), response.getString("device_name"), 1
                         );
                     } else{
                         // update device to db
