@@ -111,7 +111,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 String item = (String)parent.getItemAtPosition(position);
                 Log.e("Websocket", "============> item clicked: " + item);
                 Bundle arguments = new Bundle();
-                arguments.putString("device_name", item);
+                arguments.putInt("style", 1);
+                arguments.putString("custom_name", item);
                 DeviceFragment fragment = new DeviceFragment();
                 fragment.setArguments(arguments);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();

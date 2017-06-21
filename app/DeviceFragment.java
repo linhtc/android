@@ -34,9 +34,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     WebSocketClient mWebSocketClient;
     String deviceName;
-    TextView customName;
-    EditText customSSID;
-    EditText customPw;
+    String customName;
+    TextView tvCustomName;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
     DBHelper db;
@@ -67,14 +66,29 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            deviceName = bundle.getString("device_name");
+            style = bundle.getInt("style");
+            customName = bundle.getString("custom_name");
         }
-        Log.e("Websocket", "============> deviceName: " + deviceName);
-        customName = (TextView)v.findViewById(R.id.custom_name);
-        customName.setText(deviceName);
+        Log.e("Websocket", "============> customName: " + customName);
+        tvCustomName = (TextView)v.findViewById(R.id.custom_name);
+        tvCustomName.setText(customName);
 
+        db = new DBHelper(getActivity());
+        Cursor device = db.getDevice(style, customName);
 
-        ((MainActivity) getActivity()).setActionBarTitle("SETUP DEVICES");
+        if(device.moveToFirst()){
+            int sta = device.getInt(device.getColumnIndex("sta"));
+            style = device.getInt(device.getColumnIndex("sty"));
+            if(sta == 0){
+                Log.e("Websocket", "connect to ws");
+                connectWebSocket();
+            }
+
+            deviceName = device.getString(device.getColumnIndex("device_name"));
+            Log.e("Websocket", "============> deviceName: " + deviceName);
+        }
+
+        ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
 
         return v;
     }
@@ -84,23 +98,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         switch(v.getId()){
             case R.id.btnSetupApply:
                 dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
-                try{
-                    state = 1;
-                    JSONObject req = new JSONObject();
-                    req.put("cmd", 2);
-                    req.put("ssid", customSSID.getText());
-                    req.put("pw", customPw.getText());
-                    Log.e("Websocket", "req: "+req.toString());
-                    mWebSocketClient.send(req.toString());
-                    if(customName.getText().toString().isEmpty()){
-                        customName.setText(deviceName);
-                    }
-                    db.updateDevice(deviceName, customName.getText().toString(), customSSID.getText().toString(), customPw.getText().toString());
-                } catch (Exception e){
-                    Log.e("Websocket", "req: "+e.getMessage());
-                    Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                    dialogLoading.dismiss();
-                }
                 break;
         }
     }

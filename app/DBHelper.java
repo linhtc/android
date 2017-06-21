@@ -101,6 +101,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.delete("devices", "id = ? ", new String[] { Integer.toString(id) });
     }
 
+    public Cursor getDevice(Integer style, String custom_name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from devices where sty = ? and custom_name = ? limit 1",
+                new String[] { Integer.toString(style), custom_name } );
+        return res;
+    }
+
     public ArrayList<String> getAllDevices() {
         ArrayList<String> array_list = new ArrayList<String>();
 
