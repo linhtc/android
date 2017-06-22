@@ -69,6 +69,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
     String finalSSID = "";
     WebSocketClient mWebSocketClient;
     DBHelper db;
+    boolean openGPS = false;
 
     @Nullable
     @Override
@@ -81,11 +82,11 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    Log.e(TAG, "===========> CookerFragment key back!");
-                    HomeFragment fragment = new HomeFragment();
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame, fragment);
-                    fragmentTransaction.commit();
+                    Log.e(TAG, "===========> HomeFragment");
+//                    HomeFragment fragment = new HomeFragment();
+//                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame, fragment);
+//                    fragmentTransaction.commit();
                     return true;
                 } else {
                     return false;
@@ -108,7 +109,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                Toast.makeText(getActivity().getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity().getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
                 String item = (String)parent.getItemAtPosition(position);
                 Log.e("Websocket", "============> item clicked: " + item);
                 Bundle arguments = new Bundle();
@@ -137,8 +138,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
         switch(v.getId()){
             case R.id.btnAddNew:
                 final LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
-
                 if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                    openGPS = true;
                     buildAlertMessageNoGps();
                 } else{
                     try{
@@ -158,6 +159,34 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        Log.e("DEBUG", "onResume of HomeFragment");
+        if(openGPS){
+            final LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
+            if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                openGPS = true;
+                buildAlertMessageNoGps();
+            } else{
+                try{
+                    dialogLoading = ProgressDialog.show(getActivity(), "", "Đang tìm thiết bị...", true);
+                    wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    if (wifi.isWifiEnabled() == false){
+                        Toast.makeText(getActivity().getApplicationContext(), "Đã bật WiFi", Toast.LENGTH_LONG).show();
+                        wifi.setWifiEnabled(true);
+                    }
+                    flagScan = true;
+                    wifiReciever = new WifiScanReceiver();
+                    getActivity().registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                    wifi.startScan();
+                } catch (Exception e){
+                    Log.e(TAG, "===================> add new e: "+e.getMessage());
+                }
+            }
+        }
+        super.onResume();
     }
 
     public void showScanningDevices(){
@@ -291,7 +320,21 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 if (activeNetwork != null && activeNetwork.isConnected() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+finalSSID+"\"")) {
 //                    new getDeviceInfo().execute();
                     Log.e(TAG, "===================> connected to device network: "+times);
-                    connectWebSocket();
+//                    connectWebSocket();
+                    dialogLoading.dismiss();
+                    DBHelper mydb;
+                    mydb = new DBHelper(getActivity());
+                    boolean ins = mydb.insertDevice(finalSSID.substring(finalSSID.indexOf("-") + 1), "", "", "", finalSSID, 1);
+                    if(ins){
+                        Bundle arguments = new Bundle();
+                        arguments.putInt("style", 1);
+                        arguments.putString("custom_name", finalSSID);
+                        SetupFragment fragment = new SetupFragment();
+                        fragment.setArguments(arguments);
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragment);
+                        fragmentTransaction.commit();
+                    }
                 } else {
                     Log.e(TAG, "===================> Waiting network: "+times);
                     if(times < 10){

@@ -96,6 +96,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateDevice (String device_name, String ip) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("wi", ip);
+        db.update("devices", contentValues, "device_name = ? ", new String[] { device_name } );
+        return true;
+    }
+
     public Integer deleteDevice (Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete("devices", "id = ? ", new String[] { Integer.toString(id) });

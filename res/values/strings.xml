@@ -21,4 +21,10 @@
     <string name="device_name">Tên thiết bị</string>
     <string name="device_ssid">Tên Wifi (SSID)</string>
     <string name="device_pw">Mật khẩu</string>
+    <string name="control_status">Trạng thái</string>
+    <string name="error_input">Chưa nhập đủ thông tin</string>
+    <string name="error_processing">Xảy ra lỗi</string>
+    <string name="device_never_connected">Thiết bị chưa kết nối được Wifi</string>
+    <string name="device_setting">Thiết bị đang kết nối Wifi</string>
+    <string name="app_connecting">Ứng dụng đang kết nối Wifi</string>
 </resources>

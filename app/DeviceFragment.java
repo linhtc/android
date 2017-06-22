@@ -68,29 +68,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.device_fragment,container,false);
 
+        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+
         v.setFocusableInTouchMode(true);
         v.requestFocus();
         v.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    db.close();
-                    Log.e(TAG, "===========> CookerFragment key back!");
-                    HomeFragment fragment = new HomeFragment();
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame, fragment);
-                    fragmentTransaction.commit();
-                    try{
-                        if(WebSocket.READYSTATE.OPEN.compareTo(mWebSocketClient.getReadyState()) == 0){
-                            mWebSocketClient.close();
-                        }
-                    } catch (Exception e){
-                        Log.e("Websocket", "============> mWebSocketClient close: " + e.getMessage());
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
+                return true;
             }
         });
 
@@ -121,6 +106,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
 
         ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
 
+        if(deviceIP.isEmpty()){
+            dialogLoading.setMessage(getResources().getString(R.string.device_setting));
+        }
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference(styString+deviceID);
+
         WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
@@ -128,21 +120,25 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
         if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
             Log.e("Websocket", "============> deviceID: " + deviceID);
-            database = FirebaseDatabase.getInstance();
-            myRef = database.getReference(styString+deviceID);
             myRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e(TAG, "=============> Value is: " + dataSnapshot.toString());
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    deviceIP = map.get("wi").toString();
-                    Log.e(TAG, "=============> Fcm response wi:"+ deviceIP);
-                    WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    if(!deviceIP.isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
-                        connectWebSocket();
-                        Log.e(TAG, "=============> opening ws...");
-                    } else{
-                        Log.e(TAG, "=============> code here");
+                    try{
+                        dialogLoading.dismiss();
+                        Log.e(TAG, "=============> Value is: " + dataSnapshot.toString());
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                        deviceIP = map.get("wi").toString();
+                        Log.e(TAG, "=============> Fcm response wi:"+ deviceIP);
+                        db.updateDevice(deviceName, deviceIP);
+                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                        if(!deviceIP.isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                            connectWebSocket();
+                            Log.e(TAG, "=============> opening ws...");
+                        } else{
+                            Log.e(TAG, "=============> code here");
+                        }
+                    } catch (Exception e){
+                        Log.e("Websocket", "============> Exception: " + e.getMessage());
                     }
                 }
 
@@ -153,14 +149,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 }
             });
         } else{
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Hay ket noi wifi de su dung")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            builder.create().show();
+            dialogLoading.setMessage(getResources().getString(R.string.app_connecting));
+//            dialogLoading.dismiss();
+//            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//            builder.setTitle("Hay ket noi wifi de su dung")
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//            builder.create().show();
         }
 
         ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);

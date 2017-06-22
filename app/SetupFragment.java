@@ -295,6 +295,8 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                             switch (style){
                                 case 1:{ // switch
                                     db.close();
+
+//                                    ConnectToNetworkWPA(customSSID.getText().toString(), customPw.getText().toString());
                                     SwitchFragment fragment = new SwitchFragment();
                                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.replace(R.id.frame, fragment);
