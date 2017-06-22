@@ -68,6 +68,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
     int times = 0;
     String finalSSID = "";
     WebSocketClient mWebSocketClient;
+    DBHelper db;
 
     @Nullable
     @Override
@@ -125,6 +126,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
         ImageButton btn = (ImageButton)v.findViewById(R.id.btnAddNew);
         btn.setOnClickListener(this);
+
+        db = new DBHelper(getActivity());
 
         return v;
     }
@@ -191,7 +194,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 }
             });
         } else{
-            builder.setTitle("Không tìm thấy").setMessage("Hãy thử khởi động lại thiết bị")
+            builder.setMessage("Không tìm thấy. Hãy thử khởi động lại thiết bị")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // FIRE ZE MISSILES!
@@ -216,9 +219,10 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                     if(!wifiScanList.get(i).SSID.equals(null)){
                         String ssid = wifiScanList.get(i).SSID;
                         if(ssid.contains("Switch-") == true){
-                            wifis.add(ssid);
+                            if(!db.checkDevice(ssid)){
+                                wifis.add(ssid);
+                            }
                         }
-//                        Log.e(TAG, "===================> "+ ssid+": "+ssid.contains("LHAP"));
                     }
                 } catch (Exception exx){
                     Log.e(TAG, "===================> "+ exx.getMessage());
@@ -263,9 +267,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                     break;
                 }
             }
-
-//            dialogLoading.hide();
-//            dialogLoading = ProgressDialog.show(getActivity(), "", "Vui lòng chờ...", true);
             Log.e(TAG, "===================> Wifi dsaexx2: ");
 
             //WiFi Connection success, return true
@@ -349,10 +350,14 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
                     DBHelper mydb;
                     mydb = new DBHelper(getActivity());
-                    boolean ins = mydb.insertDevice("", "", "", "", finalSSID, 1);
+                    boolean ins = mydb.insertDevice(finalSSID.substring(finalSSID.indexOf("-") + 1), "", "", "", finalSSID, 1);
                     if(ins){
                         mWebSocketClient.close();
+                        Bundle arguments = new Bundle();
+                        arguments.putInt("style", 1);
+                        arguments.putString("custom_name", finalSSID);
                         SetupFragment fragment = new SetupFragment();
+                        fragment.setArguments(arguments);
                         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragment);
                         fragmentTransaction.commit();
@@ -374,11 +379,21 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.e("Websocket", "Closed " + s);
+                dialogLoading.dismiss();
             }
 
             @Override
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
+                dialogLoading.dismiss();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Ket noi that bai")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create().show();
             }
         };
         mWebSocketClient.connect();

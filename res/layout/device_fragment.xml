@@ -36,15 +36,55 @@
                 android:textStyle="normal" />
 
             <ImageButton
-                android:id="@+id/btnAddNew"
+                android:id="@+id/btnConfig"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:scaleType="fitEnd"
-                android:src="@drawable/plus32"
+                android:src="@drawable/settings32"
                 android:background="@null"
                 android:textAlignment="viewEnd" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="9dp"
+                android:layout_weight="1"
+                android:textSize="14dp"
+                android:textStyle="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="9dp"
+                android:layout_weight="1"
+                android:text="@string/control_status"
+                android:textSize="14dp"
+                android:textStyle="normal" />
+
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/btnDeviceSwitch"
+                style="@style/SwitchButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
 
         </TableRow>
 

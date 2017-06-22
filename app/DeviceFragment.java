@@ -1,8 +1,12 @@
 package com.android4dev.navigationview;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,16 +18,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.kyleduo.switchbutton.SwitchButton;
+
+import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Admin on 04-06-2015.
@@ -35,10 +52,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     WebSocketClient mWebSocketClient;
     String deviceName;
     String customName;
+    String deviceIP;
+    String deviceSSID;
+    String deviceID;
     TextView tvCustomName;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
+    String styString = "switch";
     DBHelper db;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
 
     @Nullable
     @Override
@@ -57,6 +80,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.frame, fragment);
                     fragmentTransaction.commit();
+                    try{
+                        if(WebSocket.READYSTATE.OPEN.compareTo(mWebSocketClient.getReadyState()) == 0){
+                            mWebSocketClient.close();
+                        }
+                    } catch (Exception e){
+                        Log.e("Websocket", "============> mWebSocketClient close: " + e.getMessage());
+                    }
                     return true;
                 } else {
                     return false;
@@ -69,6 +99,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             style = bundle.getInt("style");
             customName = bundle.getString("custom_name");
         }
+        if(style == 1){
+            styString = "switchs/";
+        }
         Log.e("Websocket", "============> customName: " + customName);
         tvCustomName = (TextView)v.findViewById(R.id.custom_name);
         tvCustomName.setText(customName);
@@ -79,16 +112,100 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         if(device.moveToFirst()){
             int sta = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
-            if(sta == 0){
-                Log.e("Websocket", "connect to ws");
-                connectWebSocket();
-            }
-
+            deviceIP = device.getString(device.getColumnIndex("wi"));
+            deviceID = device.getString(device.getColumnIndex("fcm"));
             deviceName = device.getString(device.getColumnIndex("device_name"));
+            deviceSSID = device.getString(device.getColumnIndex("ws"));
             Log.e("Websocket", "============> deviceName: " + deviceName);
         }
 
         ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
+
+        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        Log.e(TAG, "===================> active network: "+activeNetwork);
+        Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
+        if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
+            Log.e("Websocket", "============> deviceID: " + deviceID);
+            database = FirebaseDatabase.getInstance();
+            myRef = database.getReference(styString+deviceID);
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e(TAG, "=============> Value is: " + dataSnapshot.toString());
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    deviceIP = map.get("wi").toString();
+                    Log.e(TAG, "=============> Fcm response wi:"+ deviceIP);
+                    WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    if(!deviceIP.isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                        connectWebSocket();
+                        Log.e(TAG, "=============> opening ws...");
+                    } else{
+                        Log.e(TAG, "=============> code here");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.e(TAG, "=============> Failed to read value.", error.toException());
+                }
+            });
+        } else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Hay ket noi wifi de su dung")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            builder.create().show();
+        }
+
+        ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);
+        btn.setOnClickListener(this);
+        SwitchButton btnDeviceSwitch = (SwitchButton)v.findViewById(R.id.btnDeviceSwitch);
+        btnDeviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+                Log.e(TAG, "=============> switch to: " + isChecked);
+                if (activeNetwork != null && activeNetwork.isConnected()) {
+                    WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                        try{
+                            JSONObject req = new JSONObject();
+                            req.put("cmd", 3);
+                            req.put("ps", 18);
+                            req.put("req", isChecked ? 1 : 0);
+                            Log.e("Websocket", "==> req: "+req.toString());
+                            if(WebSocket.READYSTATE.OPEN.compareTo(mWebSocketClient.getReadyState()) == 0){
+                                mWebSocketClient.send(req.toString());
+                            } else {
+                                mWebSocketClient.connect();
+                                mWebSocketClient.send(req.toString());
+                            }
+                        } catch (Exception e){
+                            Log.e("mWebSocketClient", "============> err: " + e.getMessage());
+                        }
+                    } else{
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
+                        myRef.updateChildren(childUpdates);
+                    }
+                } else{
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Hay ket noi wifi de su dung")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    builder.create().show();
+                }
+            }
+        });
 
         return v;
     }
@@ -96,20 +213,36 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-            case R.id.btnSetupApply:
-                dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+            case R.id.btnConfig:
+                Bundle arguments = new Bundle();
+                arguments.putInt("style", style);
+                arguments.putString("custom_name", customName);
+                SetupFragment fragment = new SetupFragment();
+                fragment.setArguments(arguments);
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.commit();
                 break;
+            default:break;
         }
     }
 
     private void connectWebSocket() {
         URI uri;
         try {
-            uri = new URI("ws://192.168.4.1:9998");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+            String urip;
+            if(deviceIP.isEmpty()){
+                urip = "ws://192.168.4.1:9998";
+            } else{
+                urip = "ws://"+deviceIP+":9998";
+            }
+            Log.e(TAG, "====================>"+urip);
+            uri = new URI(urip);
+        } catch (Exception e) {
+            Log.e("Websocket", "============> URI err: " + e.getMessage());
             return;
         }
+        Log.e("Websocket", "come on come on...");
 
         mWebSocketClient = new WebSocketClient(uri) {
             @Override

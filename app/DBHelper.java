@@ -107,6 +107,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] { Integer.toString(style), custom_name } );
         return res;
     }
+    public boolean checkDevice(String device_name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select device_name from devices where device_name = ? limit 1", new String[] { device_name } );
+        return (res.getCount() > 0) ? true : false;
+    }
+
 
     public ArrayList<String> getAllDevices() {
         ArrayList<String> array_list = new ArrayList<String>();

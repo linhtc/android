@@ -62,9 +62,12 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     WebSocketClient mWebSocketClient;
     String deviceName;
+    String optionName;
+    String deviceIP;
     EditText customName;
     EditText customSSID;
     EditText customPw;
+    int times = 0;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
     DBHelper db;
@@ -93,15 +96,24 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            style = bundle.getInt("style");
+            optionName = bundle.getString("custom_name");
+        }
+
         db = new DBHelper(getActivity());
-        Cursor device = db.getDeviceToSetup();
+//        Cursor device = db.getDeviceToSetup();
+        Cursor device = db.getDevice(style, optionName);
         if(device.moveToFirst()){
             int sta = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
-            if(sta == 0){
-                Log.e("Websocket", "connect to ws");
-                connectWebSocket();
-            }
+            deviceIP = device.getString(device.getColumnIndex("wi"));
+//            if(sta == 0){
+//                Log.e("Websocket", "connect to ws");
+//                connectWebSocket();
+//            }
+            checkActiveWifi();
 
             deviceName = device.getString(device.getColumnIndex("device_name"));
             String optionName = device.getString(device.getColumnIndex("custom_name"));
@@ -125,36 +137,132 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.btnSetupApply:
-                dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
                 try{
-                    state = 1;
-                    JSONObject req = new JSONObject();
-                    req.put("cmd", 2);
-                    req.put("ssid", customSSID.getText());
-                    req.put("pw", customPw.getText());
-                    Log.e("Websocket", "req: "+req.toString());
-                    mWebSocketClient.send(req.toString());
-                    if(customName.getText().toString().isEmpty()){
-                        customName.setText(deviceName);
+                    if(customSSID.getText().toString().isEmpty()){
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_input), Toast.LENGTH_LONG).show();
+                    } else{
+                        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+                        state = 1;
+                        JSONObject req = new JSONObject();
+                        req.put("cmd", 2);
+                        req.put("ssid", customSSID.getText());
+                        req.put("pw", customPw.getText());
+                        Log.e("Websocket", "==> req: "+req.toString());
+                        mWebSocketClient.send(req.toString());
+                        if(customName.getText().toString().isEmpty()){
+                            customName.setText(deviceName);
+                        }
+                        db.updateDevice(deviceName, customName.getText().toString(), customSSID.getText().toString(), customPw.getText().toString());
                     }
-                    db.updateDevice(deviceName, customName.getText().toString(), customSSID.getText().toString(), customPw.getText().toString());
                 } catch (Exception e){
                     Log.e("Websocket", "req: "+e.getMessage());
-                    Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
                     dialogLoading.dismiss();
+                    if(mWebSocketClient.getConnection() != null){
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_processing), Toast.LENGTH_LONG).show();
+                    } else{
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
+                        mWebSocketClient.connect();
+                    }
                 }
                 break;
+        }
+    }
+
+    public boolean checkActiveWifi(){
+        times++;
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+                Log.e(TAG, "===================> active network: "+activeNetwork);
+                Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
+                if (activeNetwork != null && activeNetwork.isConnected() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceName+"\"")) {
+//                    new getDeviceInfo().execute();
+                    Log.e(TAG, "===================> connected to device network: "+times);
+                    connectWebSocket();
+                } else {
+                    Log.e(TAG, "===================> Waiting network: "+times);
+                    if(times < 10){
+                        checkActiveWifi();
+                    } else{
+                        dialogLoading.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Không kết nối được")
+                                .setMessage("Hãy khởi động máy, thiết bị và thử lại")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        builder.create().show();
+                    }
+                }
+            }
+        }, 3000);
+        return true;
+    }
+
+    public boolean ConnectToNetworkWPA( String networkSSID, String password ) {
+        try {
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
+
+            conf.preSharedKey = "\"" + password + "\"";
+
+            conf.status = WifiConfiguration.Status.ENABLED;
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+            Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
+
+            WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.addNetwork(conf);
+
+            Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
+
+            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for( WifiConfiguration i : list ) {
+                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    Log.d("re connecting", i.SSID + " " + conf.preSharedKey);
+
+                    break;
+                }
+            }
+            Log.e(TAG, "===================> Wifi dsaexx2: ");
+
+            //WiFi Connection success, return true
+            return true;
+        } catch (Exception ex) {
+            Log.e(TAG, "===================> ConnectToNetworkWPA: "+ex.getMessage());
+            return false;
         }
     }
 
     private void connectWebSocket() {
         URI uri;
         try {
-            uri = new URI("ws://192.168.4.1:9998");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+            String urip;
+            if(deviceIP.isEmpty()){
+                urip = "ws://192.168.4.1:9998";
+            } else{
+                urip = "ws://"+deviceIP;
+            }
+            Log.e(TAG, "====================>"+urip);
+            uri = new URI(urip);
+        } catch (Exception e) {
+            Log.e("Websocket", "============> URI err: " + e.getMessage());
             return;
         }
+        Log.e("Websocket", "come on come on...");
 
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
@@ -219,6 +327,11 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
+                if(deviceIP.isEmpty()){
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
+                } else{
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_processing), Toast.LENGTH_LONG).show();
+                }
             }
         };
         mWebSocketClient.connect();
