@@ -138,6 +138,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                             deviceIP = map.get("wi").toString();
                             connectWebSocket();
                         }
+                    } else{
+                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                        if(deviceIP.isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                            if(!map.get("wi").toString().isEmpty()){
+                                deviceIP = map.get("wi").toString();
+                            }
+                            connectWebSocket();
+                        }
                     }
                 } catch (Exception e){
                     Log.e("Websocket", "============> Exception: " + e.getMessage());

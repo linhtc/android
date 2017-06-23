@@ -87,7 +87,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
         Log.e("Websocket", "============> devices: "+devices.toString());
 
         if(devices.size() < 1){
-            devices.add("Chưa có thiết bị nào");
+            devices.add(getResources().getString(R.string.not_found_device));
         }
 
         ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
@@ -99,15 +99,17 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 //                Toast.makeText(getActivity().getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
                 String item = (String)parent.getItemAtPosition(position);
                 Log.e("Websocket", "============> item clicked: " + item);
-                Bundle arguments = new Bundle();
-                arguments.putInt("style", 1);
-                arguments.putString("custom_name", item);
-                DeviceFragment fragment = new DeviceFragment();
-                fragment.setArguments(arguments);
-                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                if(!item.equalsIgnoreCase(getResources().getString(R.string.not_found_device))){
+                    Bundle arguments = new Bundle();
+                    arguments.putInt("style", 1);
+                    arguments.putString("custom_name", item);
+                    DeviceFragment fragment = new DeviceFragment();
+                    fragment.setArguments(arguments);
+                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frame, fragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
             }
         });
 

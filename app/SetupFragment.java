@@ -67,6 +67,8 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     String deviceName;
     String optionName;
     String deviceIP;
+    String deviceSSID;
+    String devicePw;
     EditText customName;
     EditText customSSID;
     EditText customPw;
@@ -74,6 +76,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
     boolean startConnect = false;
+    boolean flag_apply = false;
     DBHelper db;
 
     @Nullable
@@ -84,6 +87,8 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         v.setFocusableInTouchMode(true);
         v.requestFocus();
 
+        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             style = bundle.getInt("style");
@@ -93,15 +98,15 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         db = new DBHelper(getActivity());
         Cursor device = db.getDevice(style, optionName);
         if(device.moveToFirst()){
-            int sta = device.getInt(device.getColumnIndex("sta"));
+            state = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
             deviceIP = device.getString(device.getColumnIndex("wi"));
             checkActiveWifi();
 
             deviceName = device.getString(device.getColumnIndex("device_name"));
             String optionName = device.getString(device.getColumnIndex("custom_name"));
-            String deviceSSID = device.getString(device.getColumnIndex("ws"));
-            String devicePw = device.getString(device.getColumnIndex("wp"));
+            deviceSSID = device.getString(device.getColumnIndex("ws"));
+            devicePw = device.getString(device.getColumnIndex("wp"));
             customName = (EditText)v.findViewById(R.id.custom_name);
             customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
             customSSID = (EditText)v.findViewById(R.id.custom_ssid);
@@ -122,9 +127,18 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         switch(v.getId()){
             case R.id.btnSetupApply:
                 try{
-                    if(customSSID.getText().toString().isEmpty()){
-                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_input), Toast.LENGTH_LONG).show();
-                    } else{
+                    if(!customName.getText().toString().isEmpty()){
+                        optionName = customName.getText().toString();
+                    }
+                    if(!customSSID.getText().toString().isEmpty()){
+                        deviceSSID = customSSID.getText().toString();
+                    }
+                    if(!customPw.getText().toString().isEmpty()){
+                        devicePw = customPw.getText().toString();
+                    }
+                    db.updateDevice(deviceName, optionName, deviceSSID, devicePw);
+                    if(!customSSID.getText().toString().isEmpty() && !customPw.getText().toString().isEmpty()){
+                        flag_apply = true;
                         dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
                         state = 1;
                         JSONObject req = new JSONObject();
@@ -133,10 +147,17 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                         req.put("pw", customPw.getText());
                         Log.e("Websocket", "==> req: "+req.toString());
                         mWebSocketClient.send(req.toString());
-                        if(customName.getText().toString().isEmpty()){
-                            customName.setText(deviceName);
-                        }
-                        db.updateDevice(deviceName, customName.getText().toString(), customSSID.getText().toString(), customPw.getText().toString());
+                    } else{
+                        flag_apply = false;
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.updated), Toast.LENGTH_LONG).show();
+                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//                        wifiManager.disconnect();
+//                        wifiManager.reconnect();
+                        SwitchFragment fragment = new SwitchFragment();
+                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragment);
+//                                    fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
                 } catch (Exception e){
                     Log.e("Websocket", "req: "+e.getMessage());
@@ -174,7 +195,11 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                 final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
                 Log.e(TAG, "===================> active network: "+activeNetwork);
                 Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
-                if (activeNetwork != null && activeNetwork.isConnected() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceName+"\"")) {
+                if (activeNetwork != null && activeNetwork.isConnected() && (
+                        wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceName+"\"") ||
+                        wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")
+                    )
+                ) {
 //                    new getDeviceInfo().execute();
                     Log.e(TAG, "===================> connected to device network: "+times);
                     if(!startConnect){
@@ -190,8 +215,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                             dialogLoading.dismiss();
                         }
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Không kết nối được")
-                                .setMessage("Hãy khởi động máy, thiết bị và thử lại")
+                        builder.setTitle(getResources().getString(R.string.device_connected_yet))
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
@@ -205,48 +229,6 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         return true;
     }
 
-    public boolean ConnectToNetworkWPA( String networkSSID, String password ) {
-        try {
-            WifiConfiguration conf = new WifiConfiguration();
-            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
-
-            conf.preSharedKey = "\"" + password + "\"";
-
-            conf.status = WifiConfiguration.Status.ENABLED;
-            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-
-            Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
-
-            WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            wifiManager.addNetwork(conf);
-
-            Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
-
-            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-            for( WifiConfiguration i : list ) {
-                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
-                    wifiManager.disconnect();
-                    wifiManager.enableNetwork(i.networkId, true);
-                    wifiManager.reconnect();
-                    Log.d("re connecting", i.SSID + " " + conf.preSharedKey);
-
-                    break;
-                }
-            }
-            Log.e(TAG, "===================> Wifi dsaexx2: ");
-
-            //WiFi Connection success, return true
-            return true;
-        } catch (Exception ex) {
-            Log.e(TAG, "===================> ConnectToNetworkWPA: "+ex.getMessage());
-            return false;
-        }
-    }
-
     private void connectWebSocket() {
         URI uri;
         try {
@@ -254,7 +236,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             if(deviceIP.isEmpty()){
                 urip = "ws://192.168.4.1:9998";
             } else{
-                urip = "ws://"+deviceIP;
+                urip = "ws://"+deviceIP+":9998";
             }
             Log.e(TAG, "====================>"+urip);
             uri = new URI(urip);
@@ -292,22 +274,24 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                     if(state == 1){
                         dialogLoading.dismiss();
                         if(res.getInt("status") == 1){
-                            switch (style){
-                                case 1:{ // switch
-                                    db.close();
+                            if(flag_apply){
+                                switch (style){
+                                    case 1:{ // switch
+                                        db.close();
 
 //                                    ConnectToNetworkWPA(customSSID.getText().toString(), customPw.getText().toString());
-                                    WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                                    wifiManager.disconnect();
-                                    wifiManager.reconnect();
-                                    SwitchFragment fragment = new SwitchFragment();
-                                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-                                    fragmentTransaction.replace(R.id.frame, fragment);
-                                    fragmentTransaction.addToBackStack(null);
-                                    fragmentTransaction.commit();
-                                    break;
+                                        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                        wifiManager.disconnect();
+                                        wifiManager.reconnect();
+                                        SwitchFragment fragment = new SwitchFragment();
+                                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                                        fragmentTransaction.replace(R.id.frame, fragment);
+//                                    fragmentTransaction.addToBackStack(null);
+                                        fragmentTransaction.commit();
+                                        break;
+                                    }
+                                    default:break;
                                 }
-                                default:break;
                             }
                         } else{
                             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
