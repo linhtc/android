@@ -138,8 +138,9 @@ public class MainActivity extends AppCompatActivity {
         setActionBarTitle("LINHOMES");
 
         HomeFragment fragment = new HomeFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
+//        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
         checkAllRequirePermission();
@@ -147,36 +148,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setActionBarTitle(String title) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            getSupportActionBar().setTitle(Html.fromHtml("<small text-align='center'><font align='center' color='#7f7f7f' size='12'>"+title+"</font></small>", FROM_HTML_OPTION_USE_CSS_COLORS));
-         } else {
-            getSupportActionBar().setTitle(Html.fromHtml("<small text-align='center'><font align='center' color='#7f7f7f' size='12'>"+title+"</font></small>"));
-        }
-
-//        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-//
-//        // Create a TextView programmatically.
-//        TextView tv = new TextView(getApplicationContext());
-//
-//        // Apply the layout parameters to TextView widget
-//        tv.setLayoutParams(params);
-//
-//        // Set text to display in TextView
-//        tv.setText(getSupportActionBar().getTitle());
-//
-//        // Set the text color of TextView
-//        tv.setTextColor(Color.BLACK);
-//
-//        // Set TextView text alignment to center
-//        tv.setGravity(Gravity.CENTER);
-//
-//        tv.setTextAlignment(toolbar.getTextAlignment());
-//
-//        // Set the ActionBar display option
-//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-//
-//        // Finally, set the newly created TextView as ActionBar custom view
-//        getSupportActionBar().setCustomView(tv);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(getLayoutInflater().inflate(R.layout.custom_actionbar, null),
+                new ActionBar.LayoutParams(
+                        ActionBar.LayoutParams.WRAP_CONTENT,
+                        ActionBar.LayoutParams.MATCH_PARENT,
+                        Gravity.CENTER
+                )
+        );
+        getSupportActionBar().setTitle(title);
+        TextView tv = (TextView)findViewById(R.id.actionbar_textview);
+        tv.setText(title);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.android4dev.navigationview;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +21,7 @@ import android.widget.ImageButton;
 /**
  * Created by Admin on 04-06-2015.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment {
 
     private static final String TAG = "MainActivity";
 
@@ -30,15 +30,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.home_fragment,container,false);
 
+        v.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                    try{
+                        FragmentManager fm = getFragmentManager();
+                        if (fm.getBackStackEntryCount() > 0) {
+                            Log.e("MainActivity", "==============> popping backstack");
+                            fm.popBackStack();
+                        }
+                    } catch (Exception e){
+                        Log.e("Websocket", "============> Exception: " + e.getMessage());
+                    }
+                }
+                return true;
+            }
+        });
+
         addListenerOnButton(v);
         ((MainActivity) getActivity()).setActionBarTitle("LINHOMES");
 
         return v;
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 
     public void addListenerOnButton(View v) {
@@ -58,8 +71,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     case MotionEvent.ACTION_UP:
 
                         SwitchFragment fragment = new SwitchFragment();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragment);
+                        fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                         break;
 
@@ -80,29 +94,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
-                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-                        v.invalidate();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP:
-
-                        CookerFragment fragment = new CookerFragment();
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragment);
-                        fragmentTransaction.commit();
-                        break;
-
-                    case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
-                        view.getBackground().clearColorFilter();
-                        view.invalidate();
-                        break;
-                    }
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    ImageButton view = (ImageButton ) v;
+                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                    v.invalidate();
+                    break;
                 }
-                return true;
+                case MotionEvent.ACTION_UP:
+
+                    break;
+
+                case MotionEvent.ACTION_CANCEL: {
+                    ImageButton view = (ImageButton) v;
+                    view.getBackground().clearColorFilter();
+                    view.invalidate();
+                    break;
+                }
+            }
+            return true;
             }
 
         });
@@ -112,24 +122,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
-                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-                        v.invalidate();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP:
-
-
-                    case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
-                        view.getBackground().clearColorFilter();
-                        view.invalidate();
-                        break;
-                    }
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    ImageButton view = (ImageButton ) v;
+                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                    v.invalidate();
+                    break;
                 }
-                return true;
+                case MotionEvent.ACTION_UP:
+
+
+                case MotionEvent.ACTION_CANCEL: {
+                    ImageButton view = (ImageButton) v;
+                    view.getBackground().clearColorFilter();
+                    view.invalidate();
+                    break;
+                }
+            }
+            return true;
             }
 
         });
@@ -139,25 +149,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
-                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-                        v.invalidate();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP:
-
-                        // Your action here on button click
-
-                    case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
-                        view.getBackground().clearColorFilter();
-                        view.invalidate();
-                        break;
-                    }
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    ImageButton view = (ImageButton ) v;
+                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                    v.invalidate();
+                    break;
                 }
-                return true;
+                case MotionEvent.ACTION_UP:
+
+                    // Your action here on button click
+
+                case MotionEvent.ACTION_CANCEL: {
+                    ImageButton view = (ImageButton) v;
+                    view.getBackground().clearColorFilter();
+                    view.invalidate();
+                    break;
+                }
+            }
+            return true;
             }
 
         });

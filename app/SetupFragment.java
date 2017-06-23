@@ -1,5 +1,8 @@
 package com.android4dev.navigationview;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,8 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -53,6 +54,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
 /**
  * Created by Admin on 04-06-2015.
  */
@@ -70,6 +73,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     int times = 0;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
+    boolean startConnect = false;
     DBHelper db;
 
     @Nullable
@@ -79,22 +83,6 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
-        v.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    db.close();
-                    Log.e(TAG, "===========> CookerFragment key back!");
-                    HomeFragment fragment = new HomeFragment();
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame, fragment);
-                    fragmentTransaction.commit();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -103,16 +91,11 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         }
 
         db = new DBHelper(getActivity());
-//        Cursor device = db.getDeviceToSetup();
         Cursor device = db.getDevice(style, optionName);
         if(device.moveToFirst()){
             int sta = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
             deviceIP = device.getString(device.getColumnIndex("wi"));
-//            if(sta == 0){
-//                Log.e("Websocket", "connect to ws");
-//                connectWebSocket();
-//            }
             checkActiveWifi();
 
             deviceName = device.getString(device.getColumnIndex("device_name"));
@@ -130,6 +113,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         ((MainActivity) getActivity()).setActionBarTitle("SETUP DEVICES");
         Button btnSetupApply = (Button) v.findViewById(R.id.btnSetupApply);
         btnSetupApply.setOnClickListener(this);
+
         return v;
     }
 
@@ -168,6 +152,17 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onStop() {
+        Log.e("DEBUG", "closing socket...");
+        try{
+            mWebSocketClient.close();
+        } catch (Exception e){
+            Log.e("DEBUG", "closing socket err: "+e.getMessage());
+        }
+        super.onStop();
+    }
+
     public boolean checkActiveWifi(){
         times++;
         final Handler handler = new Handler();
@@ -182,13 +177,18 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                 if (activeNetwork != null && activeNetwork.isConnected() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceName+"\"")) {
 //                    new getDeviceInfo().execute();
                     Log.e(TAG, "===================> connected to device network: "+times);
-                    connectWebSocket();
+                    if(!startConnect){
+                        startConnect = true;
+                        connectWebSocket();
+                    }
                 } else {
                     Log.e(TAG, "===================> Waiting network: "+times);
                     if(times < 10){
                         checkActiveWifi();
                     } else{
-                        dialogLoading.dismiss();
+                        if(dialogLoading.isShowing()){
+                            dialogLoading.dismiss();
+                        }
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle("Không kết nối được")
                                 .setMessage("Hãy khởi động máy, thiết bị và thử lại")
@@ -297,9 +297,13 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                                     db.close();
 
 //                                    ConnectToNetworkWPA(customSSID.getText().toString(), customPw.getText().toString());
+                                    WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                    wifiManager.disconnect();
+                                    wifiManager.reconnect();
                                     SwitchFragment fragment = new SwitchFragment();
-                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
                                     fragmentTransaction.replace(R.id.frame, fragment);
+                                    fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
                                     break;
                                 }
@@ -330,9 +334,9 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
                 if(deviceIP.isEmpty()){
-                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
                 } else{
-                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_processing), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.error_processing), Toast.LENGTH_LONG).show();
                 }
             }
         };

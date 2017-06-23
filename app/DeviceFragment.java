@@ -1,16 +1,19 @@
 package com.android4dev.navigationview;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,6 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
 /**
  * Created by Admin on 04-06-2015.
  */
@@ -58,6 +63,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     TextView tvCustomName;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
+    boolean flagControl = false;
+    boolean flagShowDialog = false;
+    boolean flagReconnect = false;
     String styString = "switch";
     DBHelper db;
     FirebaseDatabase database;
@@ -68,16 +76,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.device_fragment,container,false);
 
-        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
-        v.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return true;
-            }
-        });
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -95,95 +97,84 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         Cursor device = db.getDevice(style, customName);
 
         if(device.moveToFirst()){
-            int sta = device.getInt(device.getColumnIndex("sta"));
+            state = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
             deviceIP = device.getString(device.getColumnIndex("wi"));
             deviceID = device.getString(device.getColumnIndex("fcm"));
             deviceName = device.getString(device.getColumnIndex("device_name"));
             deviceSSID = device.getString(device.getColumnIndex("ws"));
             Log.e("Websocket", "============> deviceName: " + deviceName);
+            Log.e("Websocket", "============> deviceIP: " + deviceIP);
+            Log.e("Websocket", "============> deviceID: " + deviceID);
+            Log.e("Websocket", "============> deviceSSID: " + deviceSSID);
         }
+        device.close();
 
         ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
 
         if(deviceIP.isEmpty()){
             dialogLoading.setMessage(getResources().getString(R.string.device_setting));
+        } else{
+            connectWebSocket();
         }
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference(styString+deviceID);
 
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-        Log.e(TAG, "===================> active network: "+activeNetwork);
-        Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
-        if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
-            Log.e("Websocket", "============> deviceID: " + deviceID);
-            myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    try{
-                        dialogLoading.dismiss();
-                        Log.e(TAG, "=============> Value is: " + dataSnapshot.toString());
-                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                        deviceIP = map.get("wi").toString();
-                        Log.e(TAG, "=============> Fcm response wi:"+ deviceIP);
-                        db.updateDevice(deviceName, deviceIP);
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try{
+                    dialogLoading.dismiss();
+                    Log.e(TAG, "=============> Value is: " + dataSnapshot.toString());
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    Log.e(TAG, "=============> Fcm response wi:"+ map.get("wi").toString());
+                    Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
+                    db.updateDevice(deviceName, deviceIP);
+                    if(flagControl){
+                        flagControl = false;
                         WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                        if(!deviceIP.isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                        if(deviceIP.isEmpty() && !map.get("wi").toString().isEmpty() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                            deviceIP = map.get("wi").toString();
                             connectWebSocket();
-                            Log.e(TAG, "=============> opening ws...");
-                        } else{
-                            Log.e(TAG, "=============> code here");
                         }
-                    } catch (Exception e){
-                        Log.e("Websocket", "============> Exception: " + e.getMessage());
                     }
+                } catch (Exception e){
+                    Log.e("Websocket", "============> Exception: " + e.getMessage());
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.e(TAG, "=============> Failed to read value.", error.toException());
-                }
-            });
-        } else{
-            dialogLoading.setMessage(getResources().getString(R.string.app_connecting));
-//            dialogLoading.dismiss();
-//            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//            builder.setTitle("Hay ket noi wifi de su dung")
-//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//            builder.create().show();
-        }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.e(TAG, "=============> Failed to read value.", error.toException());
+            }
+        });
 
         ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);
         btn.setOnClickListener(this);
         SwitchButton btnDeviceSwitch = (SwitchButton)v.findViewById(R.id.btnDeviceSwitch);
+        btnDeviceSwitch.setChecked(state == 1 ? true : false);
         btnDeviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                final ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-                Log.e(TAG, "=============> switch to: " + isChecked);
-                if (activeNetwork != null && activeNetwork.isConnected()) {
+                Log.e(TAG, "=============> mode: " + buttonView.isInTouchMode());
+                if(buttonView.isInTouchMode()){
+                    flagControl = true;
+                    Log.e(TAG, "=============> switch to: " + isChecked);
                     WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                     if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                        if(flagShowDialog && !deviceIP.isEmpty()){
+                            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.cannot_connect_device), Toast.LENGTH_LONG).show();
+                            buttonView.setChecked(isChecked ? false : true);
+                            return;
+                        }
                         try{
                             JSONObject req = new JSONObject();
                             req.put("cmd", 3);
                             req.put("ps", 18);
                             req.put("req", isChecked ? 1 : 0);
                             Log.e("Websocket", "==> req: "+req.toString());
-                            if(WebSocket.READYSTATE.OPEN.compareTo(mWebSocketClient.getReadyState()) == 0){
-                                mWebSocketClient.send(req.toString());
-                            } else {
-                                mWebSocketClient.connect();
-                                mWebSocketClient.send(req.toString());
-                            }
+                            mWebSocketClient.send(req.toString());
                         } catch (Exception e){
                             Log.e("mWebSocketClient", "============> err: " + e.getMessage());
                         }
@@ -192,15 +183,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
                         myRef.updateChildren(childUpdates);
                     }
-                } else{
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Hay ket noi wifi de su dung")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    builder.create().show();
+                    Log.e(TAG, "=============> update :"+ deviceName+": "+isChecked);
+                    db.updateDevice(deviceName, isChecked ? 1 : 0);
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
+                    myRef.updateChildren(childUpdates);
                 }
             }
         });
@@ -217,12 +204,38 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 arguments.putString("custom_name", customName);
                 SetupFragment fragment = new SetupFragment();
                 fragment.setArguments(arguments);
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;
             default:break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        Log.e("DEBUG", "onResume of SwitchFragment");
+        if(flagReconnect){
+            try{
+                connectWebSocket();
+            } catch (Exception e){
+                Log.e(TAG, "============> reconnect err: "+e.getMessage());
+            }
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("DEBUG", "closing socket...");
+        try{
+            flagReconnect = true;
+            mWebSocketClient.close();
+        } catch (Exception e){
+            Log.e("DEBUG", "closing socket err: "+e.getMessage());
+        }
+        super.onStop();
     }
 
     private void connectWebSocket() {
@@ -246,7 +259,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.e("Websocket", "Opened");
-//                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
 
                 try{
                     JSONObject req = new JSONObject();
@@ -270,17 +282,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     if(state == 1){
                         dialogLoading.dismiss();
                         if(res.getInt("status") == 1){
-                            switch (style){
-                                case 1:{ // switch
-                                    db.close();
-                                    SwitchFragment fragment = new SwitchFragment();
-                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                                    fragmentTransaction.replace(R.id.frame, fragment);
-                                    fragmentTransaction.commit();
-                                    break;
-                                }
-                                default:break;
-                            }
+                            Log.e("Websocket", "============> socket ok: ok ");
                         } else{
                             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                             builder.setTitle("Không nhận được phản hồi từ thiết bị")
@@ -305,6 +307,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
+//                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_connected_yet), Toast.LENGTH_LONG).show();
+                flagShowDialog = true;
             }
         };
         mWebSocketClient.connect();

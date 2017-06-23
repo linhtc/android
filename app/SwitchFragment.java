@@ -1,5 +1,8 @@
 package com.android4dev.navigationview;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,8 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -54,6 +55,8 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
 /**
  * Created by Admin on 04-06-2015.
  */
@@ -67,7 +70,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     int times = 0;
     String finalSSID = "";
-    WebSocketClient mWebSocketClient;
     DBHelper db;
     boolean openGPS = false;
 
@@ -78,21 +80,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
-        v.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    Log.e(TAG, "===========> HomeFragment");
-//                    HomeFragment fragment = new HomeFragment();
-//                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame, fragment);
-//                    fragmentTransaction.commit();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
 
         DBHelper mydb;
         mydb = new DBHelper(getActivity());
@@ -117,8 +104,9 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 arguments.putString("custom_name", item);
                 DeviceFragment fragment = new DeviceFragment();
                 fragment.setArguments(arguments);
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });
@@ -163,7 +151,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        Log.e("DEBUG", "onResume of HomeFragment");
+        Log.e("DEBUG", "onResume of SwitchFragment");
         if(openGPS){
             final LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
             if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -317,6 +305,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
                 Log.e(TAG, "===================> active network: "+activeNetwork);
                 Log.e(TAG, "===================> active ssid: "+wifiManager.getConnectionInfo().getSSID());
+                Log.e(TAG, "===================> active finalSSID: "+finalSSID);
                 if (activeNetwork != null && activeNetwork.isConnected() && wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+finalSSID+"\"")) {
 //                    new getDeviceInfo().execute();
                     Log.e(TAG, "===================> connected to device network: "+times);
@@ -331,19 +320,20 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                         arguments.putString("custom_name", finalSSID);
                         SetupFragment fragment = new SetupFragment();
                         fragment.setArguments(arguments);
-                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragment);
+                        fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     }
                 } else {
                     Log.e(TAG, "===================> Waiting network: "+times);
                     if(times < 10){
+//                        ConnectToNetworkWPA(finalSSID, "11330232");
                         checkActiveWifi();
                     } else{
                         dialogLoading.dismiss();
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Không kết nối được")
-                                .setMessage("Hãy khởi động máy, thiết bị và thử lại")
+                        builder.setMessage("Không kết nối được.Hãy khởi động máy, thiết bị và thử lại")
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
@@ -355,91 +345,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
             }
         }, 3000);
         return true;
-    }
-
-    private void connectWebSocket() {
-        URI uri;
-        try {
-            uri = new URI("ws://192.168.4.1:9998");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        mWebSocketClient = new WebSocketClient(uri) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.e("Websocket", "Opened");
-//                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
-
-                try{
-                    JSONObject req = new JSONObject();
-                    req.put("cmd", 1);
-                    Log.e("Websocket", "req: "+req.toString());
-                    mWebSocketClient.send(req.toString());
-                } catch (Exception e){
-                    Log.e("Websocket", "============> json response err: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onMessage(String s) {
-                final String message = s;
-                Log.e("Websocket", "============> response: " + message);
-                dialogLoading.dismiss();
-                try{
-                    JSONObject res = new JSONObject(message);
-                    Log.e("Websocket", "============> json response: " + res);
-
-                    DBHelper mydb;
-                    mydb = new DBHelper(getActivity());
-                    boolean ins = mydb.insertDevice(finalSSID.substring(finalSSID.indexOf("-") + 1), "", "", "", finalSSID, 1);
-                    if(ins){
-                        mWebSocketClient.close();
-                        Bundle arguments = new Bundle();
-                        arguments.putInt("style", 1);
-                        arguments.putString("custom_name", finalSSID);
-                        SetupFragment fragment = new SetupFragment();
-                        fragment.setArguments(arguments);
-                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragment);
-                        fragmentTransaction.commit();
-                    }
-
-                } catch (Exception e){
-                    Log.e("Websocket", "============> json response err: " + e.getMessage());
-                }
-
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        TextView textView = (TextView)findViewById(R.id.messages);
-//                        textView.setText(textView.getText() + "\n" + message);
-//                    }
-//                });
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.e("Websocket", "Closed " + s);
-                dialogLoading.dismiss();
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("Websocket", "Error " + e.getMessage());
-                dialogLoading.dismiss();
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Ket noi that bai")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                builder.create().show();
-            }
-        };
-        mWebSocketClient.connect();
     }
 
     private void buildAlertMessageNoGps() {
