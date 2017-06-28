@@ -32,4 +32,6 @@
     <string name="cannot_connect_device">Chưa kết nối được. Hãy kiểm tra đèn trên thiết bị</string>
     <string name="not_found_device">Chưa có thiết bị nào</string>
     <string name="updated">Đã cập nhật</string>
+    <string name="device_connected_wifi_yet">Hay ket noi toi mot Wifi bat ky</string>
+    <string name="turn_on_wifi">Da bat wifi</string>
 </resources>

@@ -153,8 +153,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        Log.e("DEBUG", "onResume of SwitchFragment");
         if(openGPS){
+            Log.e("DEBUG", "onResume of SwitchFragment openGPS");
             final LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
             if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
                 openGPS = true;
