@@ -187,11 +187,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         flagControl = true;
                         Log.e(TAG, "=============> switch to: " + isChecked);
                         if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
-                            if(flagShowDialog && !deviceIP.isEmpty()){
-                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.cannot_connect_device), Toast.LENGTH_LONG).show();
-                                buttonView.setChecked(isChecked ? false : true);
-                                return;
-                            }
                             try{
                                 JSONObject req = new JSONObject();
                                 req.put("cmd", 3);
@@ -202,10 +197,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                             } catch (Exception e){
                                 Log.e("mWebSocketClient", "============> err: " + e.getMessage());
                             }
-                        } else{
-                            Map<String, Object> childUpdates = new HashMap<>();
-                            childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
-                            myRef.updateChildren(childUpdates);
                         }
                         Log.e(TAG, "=============> update :"+ deviceName+": "+isChecked);
                         db.updateDevice(deviceName, isChecked ? 1 : 0);
@@ -217,11 +208,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         if (wifiManager.isWifiEnabled() == false){
                             Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.turn_on_wifi), Toast.LENGTH_LONG).show();
                             wifiManager.setWifiEnabled(true);
-                            dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
-                            flagConnected = false;
-//                            lookingConnect();
                         } else{
                             Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
+                        }
+                        if(dialogLoading.isShowing()){
+                            dialogLoading.dismiss();
                         }
                     }
                 }
@@ -255,6 +246,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             Log.e("DEBUG", "onResume of DeviceFragment flagReconnect");
             try{
                 connectWebSocket();
+                if(r == null){
+                    pingConnect();
+                }
             } catch (Exception e){
                 Log.e(TAG, "============> reconnect err: "+e.getMessage());
             }
@@ -283,7 +277,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
 
     private void pingConnect(){
         handler = new Handler();
-        final Runnable r = new Runnable() {
+        r = new Runnable() {
             public void run() {
                 Log.e(TAG, "pingConnect...");
                 if(flagPing && flagWSconnected){
@@ -297,7 +291,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     }
                 }
                 handler.postDelayed(this, 3000);
-//                handler.post(this);
             }
         };
         handler.postDelayed(r, 3000);
