@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "310668197645",
+    "firebase_url": "https://linhomes-afa8a.firebaseio.com",
+    "project_id": "linhomes-afa8a",
+    "storage_bucket": "linhomes-afa8a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310668197645:android:37bfe08511c3e1db",
+        "android_client_info": {
+          "package_name": "com.android4dev.navigationview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310668197645-brs191lde04hg87u1f1iq5t0j2n1uvp0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android4dev.navigationview",
+            "certificate_hash": "e46ced2c521dbcf8410bbfcdbe1c0818574762c6"
+          }
+        },
+        {
+          "client_id": "310668197645-6clrp6qd7lll7scdlmf11uo58qf2rjj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android4dev.navigationview",
+            "certificate_hash": "17c469dd52e5f7c5430e09e8cad94257d3867c9a"
+          }
+        },
+        {
+          "client_id": "310668197645-187657nv38g50glo51mra2dukusf33q7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTvN0T_YwlPUHkNX-fbHFyicwRjmgdq5E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310668197645-187657nv38g50glo51mra2dukusf33q7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
