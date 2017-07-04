@@ -103,8 +103,6 @@ public class HomeFragment extends Fragment {
                 }
                 case MotionEvent.ACTION_UP:
 
-                    break;
-
                 case MotionEvent.ACTION_CANCEL: {
                     ImageButton view = (ImageButton) v;
                     view.getBackground().clearColorFilter();

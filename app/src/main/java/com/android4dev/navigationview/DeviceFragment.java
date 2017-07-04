@@ -74,6 +74,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     DBHelper db;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    ValueEventListener mListener;
     WifiManager wifiManager;
     ConnectivityManager conMgr;
     NetworkInfo activeNetwork;
@@ -138,33 +139,38 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         }
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference(styString+deviceID);
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                try{
-                    dialogLoading.dismiss();
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    Log.e(TAG, "=============> FCM response: " + map.toString());
-                    if(!map.get("wi").toString().isEmpty() && !map.get("wi").toString().equalsIgnoreCase(deviceIP)){
-                        Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
-                        deviceIP = map.get("wi").toString();
-                        db.updateDevice(deviceName, deviceIP);
-                        connectWebSocket();
+        if(myRef == null){
+            myRef = database.getReference(styString+deviceID);
+            mListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    try{
+                        if(dialogLoading.isShowing()){
+                            dialogLoading.dismiss();
+                        }
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                        Log.e(TAG, "=============> FCM response: " + map.toString());
+                        if(!map.get("wi").toString().isEmpty() && !map.get("wi").toString().equalsIgnoreCase(deviceIP)){
+                            Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
+                            deviceIP = map.get("wi").toString();
+                            db.updateDevice(deviceName, deviceIP);
+                            connectWebSocket();
+                        }
+                        if(!map.get("ps").toString().isEmpty()){
+//                        Log.e(TAG, "=============> FCM response: " + map.get("ps").toString());
+                        }
+                    } catch (Exception e){
+                        Log.e("FCM err", e.getMessage());
                     }
-                    if(!map.get("ps").toString().isEmpty()){
-                        Log.e(TAG, "=============> FCM response: " + map.get("ps").toString());
-                    }
-                } catch (Exception e){
-                    Log.e("FCM err", e.getMessage());
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("FCM err", "=============> Failed to read value.", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.e("FCM err", "=============> Failed to read value.", error.toException());
+                }
+            };
+            myRef.addValueEventListener(mListener);
+        }
 
         ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);
         btn.setOnClickListener(this);
@@ -179,7 +185,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
                         flagControl = true;
                         Log.e(TAG, "=============> switch to: " + isChecked);
-                        if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"")){
+                        if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"") && flagWSconnected){
                             try{
                                 JSONObject req = new JSONObject();
                                 req.put("cmd", 3);
@@ -196,6 +202,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         Map<String, Object> childUpdates = new HashMap<>();
                         childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
                         myRef.updateChildren(childUpdates);
+                        return;
                     } else{
                         flagConnected = false;
                         if (wifiManager.isWifiEnabled() == false){
@@ -207,8 +214,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         if(dialogLoading.isShowing()){
                             dialogLoading.dismiss();
                         }
+                        return;
                     }
                 }
+                return;
             }
         });
 
@@ -239,6 +248,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             Log.e("DEBUG", "onResume of DeviceFragment flagReconnect");
             try{
                 connectWebSocket();
+                db = new DBHelper(getActivity());
             } catch (Exception e){
                 Log.e(TAG, "============> reconnect err: "+e.getMessage());
             }
@@ -247,12 +257,31 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onStop() {
-        Log.e("DEBUG", "closing socket ===> ...");
+    public void onPause() {
+        Log.e("DEBUG", "onPause");
         try{
             mWebSocketClient.close();
+            db.close();
+            if (mListener != null && myRef!=null) {
+                myRef.removeEventListener(mListener);
+            }
         } catch (Exception e){
-            Log.e("DEBUG", "closing socket err: "+e.getMessage());
+            Log.e("DEBUG", "onPause err: "+e.getMessage());
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("DEBUG", "onStop");
+        try{
+            mWebSocketClient.close();
+            db.close();
+            if (mListener != null && myRef!=null) {
+                myRef.removeEventListener(mListener);
+            }
+        } catch (Exception e){
+            Log.e("DEBUG", "onStop err: "+e.getMessage());
         }
         super.onStop();
     }
@@ -315,6 +344,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             public void onClose(int i, String s, boolean b) {
                 Log.e("Websocket", "Closed ==> " + s);
                 flagWSconnected = false;
+                if(flagReconnect){
+//                    Log.e("Websocket", "reconnect to ws");
+//                    mWebSocketClient.connect();
+                }
             }
 
             @Override
