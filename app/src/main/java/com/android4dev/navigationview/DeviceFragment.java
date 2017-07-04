@@ -62,22 +62,18 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     String deviceSSID;
     String deviceID;
     TextView tvCustomName;
+    SwitchButton btnDeviceSwitch;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
     boolean flagControl = false;
     boolean flagShowDialog = false;
     boolean flagReconnect = false;
-    boolean flagPing = false;
     boolean flagConnected = false;
     boolean flagWSconnected = false;
     String styString = "switch";
     DBHelper db;
     FirebaseDatabase database;
     DatabaseReference myRef;
-    Handler handler;
-    Handler handler2;
-    Runnable r;
-    Runnable r2;
     WifiManager wifiManager;
     ConnectivityManager conMgr;
     NetworkInfo activeNetwork;
@@ -156,6 +152,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                         db.updateDevice(deviceName, deviceIP);
                         connectWebSocket();
                     }
+                    if(!map.get("ps").toString().isEmpty()){
+                        Log.e(TAG, "=============> FCM response: " + map.get("ps").toString());
+                    }
                 } catch (Exception e){
                     Log.e("FCM err", e.getMessage());
                 }
@@ -169,7 +168,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
 
         ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);
         btn.setOnClickListener(this);
-        SwitchButton btnDeviceSwitch = (SwitchButton)v.findViewById(R.id.btnDeviceSwitch);
+        btnDeviceSwitch = (SwitchButton)v.findViewById(R.id.btnDeviceSwitch);
         btnDeviceSwitch.setChecked(state == 1 ? true : false);
         btnDeviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -301,6 +300,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                             req.put("cmd", 0); // ack to response wake up from master
                             Log.e("Websocket", "req ack: "+req.toString());
                             mWebSocketClient.send(req.toString());
+                            if(res.has("pin18")){
+                                state = res.getInt("pin18");
+                                btnDeviceSwitch.setChecked(state == 1 ? true : false);
+                            }
                         }
                     }
                 } catch (Exception e){
