@@ -353,7 +353,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
-//                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_connected_yet), Toast.LENGTH_LONG).show();
                 flagShowDialog = true;
                 flagWSconnected = false;
             }
