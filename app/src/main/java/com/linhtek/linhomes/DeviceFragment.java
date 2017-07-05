@@ -231,6 +231,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 Bundle arguments = new Bundle();
                 arguments.putInt("style", style);
                 arguments.putString("custom_name", customName);
+//                arguments.putString("reactive_wifi", reactiveWifi);
+//                arguments.putStringArrayList("scanned_list", scannedWifi);
                 SetupFragment fragment = new SetupFragment();
                 fragment.setArguments(arguments);
                 FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();

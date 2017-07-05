@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.java_websocket.client.WebSocketClient;
@@ -65,7 +66,9 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "SetupFragment";
     WebSocketClient mWebSocketClient;
     ArrayList<String> scannedWifi;
+    ArrayAdapter<String> dataAdapter;
     WifiManager wifiManager;
+    WifiScanReceiver wifiReciever;
     String deviceName;
     String optionName;
     String deviceIP;
@@ -75,6 +78,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     EditText customSSID;
     EditText customPw;
     String reactiveWifi = "";
+    private Spinner inputSSID;
     int times = 0;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
@@ -114,8 +118,9 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             devicePw = device.getString(device.getColumnIndex("wp"));
             customName = (EditText)v.findViewById(R.id.custom_name);
             customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
-            customSSID = (EditText)v.findViewById(R.id.custom_ssid);
-            customSSID.setHint(getResources().getString(R.string.device_ssid)+ ": "+deviceSSID);
+//            customSSID = (EditText)v.findViewById(R.id.custom_ssid);
+//            inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
+//            customSSID.setHint(getResources().getString(R.string.device_ssid)+ ": "+deviceSSID);
             customPw = (EditText)v.findViewById(R.id.custom_pw);
             customPw.setHint(getResources().getString(R.string.device_pw)+ ": "+devicePw);
         }
@@ -124,6 +129,21 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         Button btnSetupApply = (Button) v.findViewById(R.id.btnSetupApply);
         btnSetupApply.setOnClickListener(this);
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+
+        if(scannedWifi == null){
+            scannedWifi = new ArrayList<String>();
+        }
+        inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
+        if(scannedWifi.size() > 0){
+            dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            inputSSID.setAdapter(dataAdapter);
+        } else{
+            wifiReciever = new WifiScanReceiver();
+            getActivity().registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+            wifiManager.startScan();
+        }
 
         return v;
     }
@@ -136,21 +156,24 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                     if(!customName.getText().toString().isEmpty()){
                         optionName = customName.getText().toString();
                     }
-                    if(!customSSID.getText().toString().isEmpty()){
-                        deviceSSID = customSSID.getText().toString();
+//                    if(!customSSID.getText().toString().isEmpty()){
+//                        deviceSSID = customSSID.getText().toString();
+//                    }
+                    if(!inputSSID.getSelectedItem().toString().isEmpty()){
+                        deviceSSID = inputSSID.getSelectedItem().toString();
                     }
                     if(!customPw.getText().toString().isEmpty()){
                         devicePw = customPw.getText().toString();
                     }
                     db.updateDevice(deviceName, optionName, deviceSSID, devicePw);
-                    if(!customSSID.getText().toString().isEmpty() && !customPw.getText().toString().isEmpty()){
+                    if(!inputSSID.getSelectedItem().toString().isEmpty() && !customPw.getText().toString().isEmpty()){
                         flag_apply = true;
                         dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
                         state = 1;
                         JSONObject req = new JSONObject();
                         req.put("cmd", 2);
-                        req.put("ssid", customSSID.getText());
-                        req.put("pw", customPw.getText());
+                        req.put("ssid", inputSSID.getSelectedItem().toString());
+                        req.put("pw", customPw.getText().toString());
                         Log.e("Websocket", "==> req: "+req.toString());
                         mWebSocketClient.send(req.toString());
                     } else{
@@ -186,6 +209,33 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             Log.e("DEBUG", "closing socket err: "+e.getMessage());
         }
         super.onStop();
+    }
+
+    private class WifiScanReceiver extends BroadcastReceiver {
+        public void onReceive(Context c, Intent intent) {
+            Log.e(TAG, "===================> Wifi scan receive: ");
+            List<ScanResult> wifiScanList = wifiManager.getScanResults();
+            Log.e(TAG, "===================> "+ wifiScanList.size());
+            scannedWifi  = new ArrayList<String>();
+            for(int i = 0; i < wifiScanList.size(); i++) {
+                try{
+                    if(!wifiScanList.get(i).SSID.equals(null)){
+                        String ssid = wifiScanList.get(i).SSID;
+                        if(!ssid.isEmpty()){
+                            scannedWifi.add(ssid);
+                        }
+                    }
+                    if(scannedWifi.size() > 0){
+                        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
+                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        inputSSID.setAdapter(dataAdapter);
+//                        getActivity().unregisterReceiver(wifiReciever);
+                    }
+                } catch (Exception exx){
+                    Log.e(TAG, "===================> "+ exx.getMessage());
+                }
+            }
+        }
     }
 
     public boolean checkActiveWifi(){
@@ -274,6 +324,12 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                 try{
                     JSONObject res = new JSONObject(message);
                     Log.e("Websocket", "============> json response: " + res);
+                    if(res.has("ack")){
+                        JSONObject req = new JSONObject();
+                        req.put("cmd", 0); // ack to response wake up from master
+                        Log.e("Websocket", "req ack: "+req.toString());
+                        mWebSocketClient.send(req.toString());
+                    }
                     if(state == 1){
                         dialogLoading.dismiss();
                         if(res.getInt("status") == 1){
