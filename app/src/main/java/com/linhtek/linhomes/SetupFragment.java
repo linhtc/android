@@ -181,6 +181,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         Log.e("DEBUG", "closing socket...");
         try{
             mWebSocketClient.close();
+            db.close();
         } catch (Exception e){
             Log.e("DEBUG", "closing socket err: "+e.getMessage());
         }
