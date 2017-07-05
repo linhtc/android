@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "com.android4dev.navigationview"
+        applicationId "com.linhtek.linhomes"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -31,6 +31,5 @@ dependencies {
     compile 'com.kyleduo.switchbutton:library:1.4.6'
     compile 'com.google.firebase:firebase-database:10.0.1'
 }
-
 
 apply plugin: 'com.google.gms.google-services'

@@ -10,15 +10,23 @@
       "client_info": {
         "mobilesdk_app_id": "1:310668197645:android:37bfe08511c3e1db",
         "android_client_info": {
-          "package_name": "com.android4dev.navigationview"
+          "package_name": "com.linhtek.linhomes"
         }
       },
       "oauth_client": [
         {
+          "client_id": "310668197645-tutpf8tovl2p4466cnb2a04h6uu7ftnm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.linhtek.linhomes",
+            "certificate_hash": "0598cd6df8d22cbd33c3cee3c7f7bb95413e0e48"
+          }
+        },
+        {
           "client_id": "310668197645-brs191lde04hg87u1f1iq5t0j2n1uvp0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android4dev.navigationview",
+            "package_name": "com.linhtek.linhomes",
             "certificate_hash": "e46ced2c521dbcf8410bbfcdbe1c0818574762c6"
           }
         },
@@ -26,7 +34,7 @@
           "client_id": "310668197645-6clrp6qd7lll7scdlmf11uo58qf2rjj2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android4dev.navigationview",
+            "package_name": "com.linhtek.linhomes",
             "certificate_hash": "17c469dd52e5f7c5430e09e8cad94257d3867c9a"
           }
         },
