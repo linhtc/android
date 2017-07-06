@@ -1,8 +1,15 @@
 package com.linhtek.linhomes;
 
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +36,8 @@ public class SignupActivity extends AppCompatActivity {
     DatabaseReference myRef;
     ValueEventListener mListener;
     boolean created = false;
+    boolean respondent = false;
+    ProgressDialog progressDialog;
 
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_mobile) EditText _mobileText;
@@ -46,6 +55,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                respondent = false;
                 signup();
             }
         });
@@ -73,7 +83,7 @@ public class SignupActivity extends AppCompatActivity {
         created = false;
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
@@ -87,6 +97,7 @@ public class SignupActivity extends AppCompatActivity {
                 try{
                     if(!dataSnapshot.hasChildren()){
                         created = true;
+                        respondent = true;
                         String name = _nameText.getText().toString();
                         String ph = _mobileText.getText().toString();
                         String pw = _passwordText.getText().toString();
@@ -111,24 +122,41 @@ public class SignupActivity extends AppCompatActivity {
             }
         };
         myRef.addValueEventListener(mListener);
-
-        // TODO: Implement your own signup logic here.
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        progressDialog.dismiss();
-                        if(created){
-                            onSignupSuccess();
-                        } else{
-                             onSignupFailed();
-                        }
-                    }
-                }, 3000);
+//        new android.os.Handler().postDelayed(
+//                new Runnable() {
+//                    public void run() {
+//                        // On complete call either onSignupSuccess or onSignupFailed
+//                        // depending on success
+//                        progressDialog.dismiss();
+//                        if(created){
+//                            onSignupSuccess();
+//                        } else{
+//                             onSignupFailed();
+//                        }
+//                    }
+//                }, 3000);
+        getRegisterResult();
     }
 
+    public boolean getRegisterResult(){
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(respondent){
+                    progressDialog.dismiss();
+                    if(created){
+                        onSignupSuccess();
+                    } else{
+                        onSignupFailed();
+                    }
+                } else{
+                    getRegisterResult();
+                }
+            }
+        }, 3000);
+        return true;
+    }
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
