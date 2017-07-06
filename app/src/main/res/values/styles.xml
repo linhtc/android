@@ -52,4 +52,11 @@
         <item name="android:background">@color/primary</item>
     </style>
 
+    <style name="AppTheme.Dark.Navigation" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/primary</item>
+    </style>
+
 </resources>

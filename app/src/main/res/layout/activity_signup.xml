@@ -79,7 +79,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:text="@string/create"/>
+            android:text="@string/create_acc"/>
 
         <TextView android:id="@+id/link_login"
             android:layout_width="fill_parent"
@@ -87,7 +87,7 @@
             android:layout_marginBottom="24dp"
             android:text="@string/already_acc"
             android:gravity="center"
-            android:textSize="16dip"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </ScrollView>

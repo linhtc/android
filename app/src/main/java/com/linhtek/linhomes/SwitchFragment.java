@@ -173,6 +173,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
                 buildAlertMessageNoGps();
             } else{
                 try{
+                    openGPS = false;
                     dialogLoading = ProgressDialog.show(getActivity(), "", "Đang tìm thiết bị...", true);
                     wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                     if (wifi.isWifiEnabled() == false){
@@ -368,7 +369,6 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void buildAlertMessageNoGps() {
-        openGPS = false;
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Hãy bật GPS và thử lại")
                 .setCancelable(false)

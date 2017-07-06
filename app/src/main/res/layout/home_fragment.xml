@@ -3,7 +3,7 @@
     android:id="@+id/content_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FFFFFF">
+    android:background="@color/primary">
 
     <TableRow
         android:layout_width="fill_parent"
@@ -86,7 +86,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:background="@drawable/bg_up"
-            android:src="@drawable/plug" />
+            android:src="@drawable/plug_white_64" />
 
         <ImageButton
             android:id="@+id/btnFan"

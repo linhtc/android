@@ -4,9 +4,9 @@
     <color name="PrimaryDarkColor">#1976D2</color>
     <color name="customColor">#fafafa</color>
 
-    <color name="primary">#E43F3F</color>
-    <color name="primary_dark">#E12929</color>
-    <color name="primary_darker">#CC1D1D</color>
+    <color name="primary">#1d9122</color>
+    <color name="primary_dark">#1d9122</color>
+    <color name="primary_darker">#187e1c</color>
     <color name="accent">#FFFFFF</color>
 
     <color name="black">#000000</color>

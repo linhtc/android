@@ -111,6 +111,7 @@ public class SignupActivity extends AppCompatActivity {
                         db.insertUser(name, ph, pw);
                         Log.e("FCM", "update database OK");
                     }
+                    Log.e("FCM", "response ==========> "+dataSnapshot.getValue().toString());
                 } catch (Exception e){
                     Log.e("FCM err", e.getMessage());
                 }
