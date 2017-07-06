@@ -36,7 +36,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Akash.bangad93@gmail.com"
+        android:text="tplus.tcl@gmail.com"
         android:id="@+id/email"
         android:gravity="left"
         android:layout_marginBottom="8dp"

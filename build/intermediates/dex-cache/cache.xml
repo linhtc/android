@@ -25,8 +25,17 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="56da46d08d726486051062901ab7757b74cf49ae">
+        sha1="32d05796e71335b1f9500c84886c01c06705d5a7">
         <dex dex="/home/leon/Documents/WorkSpace/Android/Linhomes/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_c18a7fb5c18471ab26b479d7003752b7bf90dbcf/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/leon/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife/7.0.1/d5d13ea991eab0252e3710e5df3d6a9d4b21d461/butterknife-7.0.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d5d13ea991eab0252e3710e5df3d6a9d4b21d461">
+        <dex dex="/home/leon/Documents/WorkSpace/Android/Linhomes/app/build/intermediates/transforms/dex/debug/folders/1000/10/butterknife-7.0.1_730b2c53b121eab2d6bd2e24817753651fdbc1f3/classes.dex" />
     </item>
     <item
         is-multidex="true"

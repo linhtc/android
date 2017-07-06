@@ -34,4 +34,16 @@
     <string name="updated">Đã cập nhật</string>
     <string name="device_connected_wifi_yet">Thiết bị chưa kết nối tới Wifi</string>
     <string name="turn_on_wifi">Đã bật Wifi</string>
+
+    <string name="phone">SĐT</string>
+    <string name="full_name">Họ tên</string>
+    <string name="password">Mật khẩu</string>
+    <string name="re_password">Xác nhận mật khẩu</string>
+    <string name="login">Đăng nhập</string>
+    <string name="no_acc_yet">Chưa có TK. Đăng ký</string>
+    <string name="required">Bắt buộc nhập</string>
+    <string name="already_acc">Đã có TK. Đăng nhập</string>
+    <string name="create">Tạo</string>
+    <string name="create_acc">Tạo tài khoản</string>
+    <string name="re_pw_wrong">Xác nhận MK chưa đúng</string>
 </resources>

@@ -11,37 +11,63 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "LinHomes.db";
-    public static final String DEVICES_TABLE_NAME = "devices";
-    public static final String CONTACTS_COLUMN_ID = "id";
-    public static final String CONTACTS_COLUMN_IP = "ip";
-    public static final String CONTACTS_COLUMN_CAT = "cat";
-    public static final String DEVICE_COLUMN_NAME = "name";
-    public static final String CONTACTS_COLUMN_PATH = "path";
-    private HashMap hp;
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 1);
+        super(context, DATABASE_NAME , null, 4);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "create table devices (" +
-                "device_name text primary key, custom_name text, ws text, wp text, wi text, fcm text, sta int, sty int" +
-        ");";
+        String query = "create table devices(" +
+            "device_name text primary key, custom_name text, ws text, wp text, wi text, fcm text, sta INTEGER, sty int" +
+        ")";
+        db.execSQL(query);
+        query = "create table users(" +
+            "phone text primary key, full_name text, pw text, sta INTEGER" +
+          ")";
         db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
         db.execSQL("DROP TABLE IF EXISTS devices");
+        db.execSQL("DROP TABLE IF EXISTS users");
         onCreate(db);
+    }
+
+    public Cursor getActiveUser() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from users where sta = 1 limit 1", null );
+        return res;
+    }
+
+    public boolean insertUser (String name, String phone, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("phone", phone);
+        contentValues.put("full_name", name);
+        contentValues.put("pw", password);
+        contentValues.put("sta", 1);
+        db.insert("users", null, contentValues);
+        return true;
+    }
+
+    public Cursor getUser(String phone, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from users where phone = ? and pw = ? limit 1", new String[] { phone, password } );
+        return res;
+    }
+
+    public boolean updateUser (String phone, Integer status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("sta", status);
+        db.update("users", contentValues, "phone = ? ", new String[] { phone } );
+        return true;
     }
 
     public boolean insertDevice (String firebase, String ap_ssid, String ap_pw, String ap_ip, String device_name, Integer style) {
@@ -82,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public int numberOfRows(){
         SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, DEVICES_TABLE_NAME);
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, "devices");
         return numRows;
     }
 

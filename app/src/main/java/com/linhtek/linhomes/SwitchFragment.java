@@ -88,7 +88,7 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
         v.requestFocus();
 
         DBHelper mydb;
-        mydb = new DBHelper(getActivity());
+        mydb = new DBHelper(getActivity().getBaseContext());
         ArrayList devices = mydb.getAllDevices(1);
         Log.e("Websocket", "============> devices: "+devices.toString());
 

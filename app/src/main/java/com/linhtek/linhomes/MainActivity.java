@@ -5,8 +5,10 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private static final int PERMISSION_REQUIREMENT = 0;
+    private  boolean logging = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +140,36 @@ public class MainActivity extends AppCompatActivity {
 //        getSupportActionBar().setTitle("LINHOMES");
         setActionBarTitle("LINHOMES");
 
+        checkAllRequirePermission();
+
+        DBHelper db = new DBHelper(getBaseContext());
+        Cursor activeUser = db.getActiveUser();
+        if(activeUser.getCount() < 1){
+            logging = true;
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        activeUser.close();
+        db.close();
+
         HomeFragment fragment = new HomeFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
 //        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
-        checkAllRequirePermission();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("MainActivity", "============> onResume");
+//        if(logging){
+//            Log.e("MainActivity", "============> logging true");
+//            logging = false;
+//            setUserInfo();
+//        }
+        setUserInfo();
     }
 
     public void setActionBarTitle(String title) {
@@ -161,6 +186,27 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
         TextView tv = (TextView)findViewById(R.id.actionbar_textview);
         tv.setText(title);
+    }
+
+    public void setUserInfo() {
+        DBHelper db = new DBHelper(getBaseContext());
+        Cursor activeUser = db.getActiveUser();
+        if(activeUser.getCount() > 0){
+            Log.e("MainActivity", "============> setUserInfo");
+            if(activeUser.moveToFirst()){
+                String phone = activeUser.getString(activeUser.getColumnIndex("phone"));
+                String name = activeUser.getString(activeUser.getColumnIndex("full_name"));
+                Log.e("MainActivity", "============> setUserInfo name: "+name);
+                NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+                View headerView = navigationView.getHeaderView(0);
+                TextView tvName = (TextView) headerView.findViewById(R.id.username);
+                tvName.setText(name);
+                TextView tvEmail = (TextView) headerView.findViewById(R.id.email);
+                tvEmail.setText(phone);
+            }
+        }
+        activeUser.close();
+        db.close();
     }
 
     @Override

@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.linhtek.linhomes.LoginActivity" android:theme="@style/AppTheme.Dark" />
+        <activity android:name="com.linhtek.linhomes.SignupActivity" android:theme="@style/AppTheme.Dark" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
