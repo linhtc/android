@@ -35,7 +35,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.text.Html.FROM_HTML_OPTION_USE_CSS_COLORS;
+//import static android.text.Html.FROM_HTML_OPTION_USE_CSS_COLORS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             // This method will trigger on item Click of navigation menu
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-
 
                 //Checking if the item is in checked state or not, if not make it in checked state
                 if(menuItem.isChecked()) menuItem.setChecked(false);
@@ -132,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         //Setting the actionbarToggle to drawer layout
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+//        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
