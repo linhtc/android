@@ -3,6 +3,8 @@
     android:id="@+id/content_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:paddingTop="20dp"
+    android:paddingBottom="30dp"
     android:background="@color/primary">
 
     <TableRow
@@ -10,29 +12,77 @@
         android:layout_height="0px"
         android:layout_weight="1" >
 
-        <ImageButton
-            android:id="@+id/btnTV"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+        <LinearLayout
+            android:gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/bg_up"
-            android:src="@drawable/television" />
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
 
-        <ImageButton
-            android:id="@+id/btnAirCondition"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/air_conditioner" />
+            <ImageButton
+                android:id="@+id/btnLaundry"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_active"
+                android:src="@drawable/cctv" />
 
-        <ImageButton
-            android:id="@+id/btnMicrowave"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/security"
+                android:textColor="#8D9AAA"
+                android:textAlignment="center" />
+
+            <TextView
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_device"
+                android:textColor="@color/text_content"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/microwave_oven" />
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <ImageButton
+                android:id="@+id/btnRefrigerator"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_active"
+                android:src="@drawable/temperature" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weather"
+                android:textColor="@color/text_title"
+                android:textAlignment="center" />
+
+            <TextView
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_device"
+                android:textColor="@color/text_content"
+                android:textAlignment="center" />
+
+        </LinearLayout>
 
     </TableRow>
 
@@ -41,60 +91,77 @@
         android:layout_height="0px"
         android:layout_weight="1" >
 
-        <ImageButton
-            android:id="@+id/btnLaundry"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+        <LinearLayout
+            android:gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/laundry_machine" />
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
 
-        <ImageButton
-            android:id="@+id/btnDishWasher"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            <ImageButton
+                android:id="@+id/btnFan"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_active"
+                android:src="@drawable/fan" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fan"
+                android:textColor="#8D9AAA"
+                android:textAlignment="center" />
+
+            <TextView
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_device"
+                android:textColor="#6C7989"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/bg_up"
-            android:src="@drawable/dishwasher" />
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
 
-        <ImageButton
-            android:id="@+id/btnRefrigerator"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/refrigerator" />
+            <ImageButton
+                android:id="@+id/btnSwitch"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_active"
+                android:src="@drawable/plug" />
 
-    </TableRow>
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/plug"
+                android:textColor="#8D9AAA"
+                android:textAlignment="center" />
 
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="0px"
-        android:layout_weight="1" >
+            <TextView
+                android:layout_marginTop="5dp"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_device"
+                android:textColor="#6C7989"
+                android:textAlignment="center" />
 
-        <ImageButton
-            android:id="@+id/btnCooker"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/toaster" />
-
-        <ImageButton
-            android:id="@+id/btnSwitch"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_up"
-            android:src="@drawable/plug_white_64" />
-
-        <ImageButton
-            android:id="@+id/btnFan"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bg_down"
-            android:src="@drawable/fan" />
+        </LinearLayout>
 
     </TableRow>
 

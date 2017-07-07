@@ -17,6 +17,6 @@
         android:textStyle="normal"
         android:textSize="16sp"
         android:text="LINHOMES"
-        android:textColor="@color/white" />
+        android:textColor="@color/text_title" />
 
 </LinearLayout>

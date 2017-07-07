@@ -10,7 +10,7 @@
             android:shape="rectangle">
             <stroke
                 android:width="0.3dp"
-                android:color="@color/primary_darker"/>
+                android:color="@color/iron"/>
         </shape>
     </item>
 </layer-list>

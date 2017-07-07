@@ -46,4 +46,10 @@
     <string name="create">Tạo</string>
     <string name="create_acc">Tạo tài khoản</string>
     <string name="re_pw_wrong">Xác nhận MK chưa đúng</string>
+
+    <string name="security">An ninh</string>
+    <string name="weather">Thời tiết</string>
+    <string name="fan">Quạt máy</string>
+    <string name="plug">Công tắc</string>
+    <string name="no_device">0 thiết bị</string>
 </resources>

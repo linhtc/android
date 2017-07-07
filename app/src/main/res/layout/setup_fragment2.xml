@@ -1,50 +1,76 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:id="@+id/content_main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white">
 
-    <TextView
-        android:layout_marginStart="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/device_name"/>
-
-    <EditText
-        android:layout_margin="10dp"
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/device_name"
-        android:id="@+id/custom_name"/>
+        android:layout_height="0px"
+        android:layout_weight="1" >
 
-    <TextView
-        android:layout_marginStart="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/device_ssid"/>
-    <Spinner
-        style="@style/spinner_style"
-        android:layout_margin="10dp"
+        <ImageButton
+            android:id="@+id/btnAirCondition"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/air_conditioner" />
+
+        <ImageButton
+            android:id="@+id/btnMicrowave"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/microwave_oven" />
+
+    </TableRow>
+
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/input_ssid"
-        android:hint="@string/device_ssid"/>
+        android:layout_height="0px"
+        android:layout_weight="1" >
 
-    <TextView
-        android:layout_marginStart="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/device_pw"/>
-    <EditText
-        android:layout_margin="10dp"
+        <ImageButton
+            android:id="@+id/btnLaundry"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/laundry_machine" />
+
+        <ImageButton
+            android:id="@+id/btnRefrigerator"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/refrigerator" />
+
+    </TableRow>
+
+    <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/device_pw"
-        android:id="@+id/custom_pw"/>
+        android:layout_height="0px"
+        android:layout_weight="1" >
+        <ImageButton
+            android:id="@+id/btnSwitch"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_up"
+            android:src="@drawable/plug" />
 
-    <Button
-        android:layout_marginEnd="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="@string/apply"
-        android:id="@+id/btnSetupApply"/>
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/btnFan"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_down"
+            android:src="@drawable/fan" />
+
+    </TableRow>
+
+</TableLayout>
