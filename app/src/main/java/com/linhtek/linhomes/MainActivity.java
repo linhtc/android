@@ -18,6 +18,7 @@ import android.os.Build;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private static final int PERMISSION_REQUIREMENT = 0;
     private  boolean logging = false;
+    public boolean create_openned = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +142,19 @@ public class MainActivity extends AppCompatActivity {
 //        getSupportActionBar().setTitle("LINHOMES");
         setActionBarTitle("LINHOMES");
 
+        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+        actionBarDrawerToggle.setHomeAsUpIndicator(R.drawable.man32);
+        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
+
         checkAllRequirePermission();
 
         DBHelper db = new DBHelper(getBaseContext());
@@ -224,7 +239,18 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+        if (id == R.id.btn_add_new) {
+            if(!create_openned){
+                create_openned = true;
+                ScanFragment fragment = new ScanFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
             return true;
         }
 

@@ -81,7 +81,6 @@
 
             <com.kyleduo.switchbutton.SwitchButton
                 android:id="@+id/btnDeviceSwitch"
-                style="@style/SwitchButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />

@@ -17,6 +17,9 @@
     <string name="openDrawer">Navigation View Closed</string>
 
     <string name="apply">Áp dụng</string>
+    <string name="connecting_to">Kết nối tới</string>
+    <string name="scan_device">Tìm thiết bị</string>
+    <string name="scanning">Đang tìm...</string>
     <string name="processing">Đang thực hiện...</string>
     <string name="connecting">Đang kết nối...</string>
     <string name="device_name">Tên thiết bị</string>

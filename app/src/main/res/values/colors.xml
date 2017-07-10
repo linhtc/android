@@ -11,6 +11,7 @@
 
     <color name="text_title">#8D9AAA</color>
     <color name="text_content">#6C7989</color>
+    <color name="btn_bg">#a6b2b6</color>
 
     <color name="black">#000000</color>
     <color name="jet">#222222</color>

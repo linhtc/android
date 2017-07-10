@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        addListenerOnButton(v);
+        addListenerOnButton(v);
         ((MainActivity) getActivity()).setActionBarTitle("LINHOMES");
 
         return v;

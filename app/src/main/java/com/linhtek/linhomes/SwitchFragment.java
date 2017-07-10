@@ -94,6 +94,24 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
         if(devices.size() < 1){
             devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
+            devices.add(getResources().getString(R.string.not_found_device));
         }
 
         ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
@@ -121,8 +139,8 @@ public class SwitchFragment extends Fragment implements View.OnClickListener {
 
         ((MainActivity) getActivity()).setActionBarTitle("SWITCH DEVICES");
 
-        ImageButton btn = (ImageButton)v.findViewById(R.id.btnAddNew);
-        btn.setOnClickListener(this);
+//        ImageButton btn = (ImageButton)v.findViewById(R.id.btnAddNew);
+//        btn.setOnClickListener(this);
 
         db = new DBHelper(getActivity());
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
