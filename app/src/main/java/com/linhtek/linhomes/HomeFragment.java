@@ -81,6 +81,13 @@ public class HomeFragment extends Fragment {
                         LinearLayout view = (LinearLayout) v;
                         view.getBackground().clearColorFilter();
                         view.invalidate();
+
+                        SwitchFragment fragment = new SwitchFragment();
+                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+
                         break;
                     }
                     case MotionEvent.ACTION_CANCEL: {

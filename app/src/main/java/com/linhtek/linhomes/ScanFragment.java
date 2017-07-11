@@ -67,34 +67,29 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         ArrayList devices = mydb.getAllDevices(1);
         Log.e("Websocket", "============> devices: "+devices.toString());
 
+        dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+//        dialogLoading.setMessage(getResources().getString(R.string.scanning));
+//        if(!dialogLoading.isShowing()){
+//            dialogLoading.show();
+//        }
+
         listView = (ListView) v.findViewById(R.id.device_list);
         if(devices.size() > 0){
-            ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
-            listView.setAdapter(adapter);
+//            ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
+//            listView.setAdapter(adapter);
         }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-//                String item = (String)parent.getItemAtPosition(position);
-//                Log.e("Websocket", "============> item clicked: " + item);
-//                if(!item.equalsIgnoreCase(getResources().getString(R.string.not_found_device))){
-//                    Bundle arguments = new Bundle();
-//                    arguments.putInt("style", 1);
-//                    arguments.putString("custom_name", item);
-//                    DeviceFragment fragment = new DeviceFragment();
-//                    fragment.setArguments(arguments);
-//                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame, fragment);
-//                    fragmentTransaction.addToBackStack(null);
-//                    fragmentTransaction.commit();
-//                }
-
                 String ssid = (String)parent.getItemAtPosition(position);
                 if(!ssid.isEmpty()){
                     Log.e("Websocket", "============> item clicked: " + ssid);
                     dialogLoading.setMessage(getResources().getString(R.string.connecting_to)+" "+ssid);
-                    dialogLoading.show();
+                    if(!dialogLoading.isShowing()){
+                        dialogLoading.show();
+                    }
 
                     boolean connected = ConnectToNetworkWPA(ssid, "11330232");
                     if(connected){
@@ -103,9 +98,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                             finalSSID = ssid;
                             times = 0;
                             checkActiveWifi();
-                            if(wifiReciever != null){
-                                getActivity().unregisterReceiver(wifiReciever);
-                            }
+//                            if(wifiReciever != null){
+//                                getActivity().unregisterReceiver(wifiReciever);
+//                            }
                         } catch (Exception exx2){
                             Log.e(TAG, "===================> Wifi exx2: "+exx2.getMessage());
                         }
@@ -119,8 +114,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
 
         ((MainActivity) getActivity()).setActionBarTitle("SCANNING DEVICES");
 
-        dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
-
         db = new DBHelper(getActivity());
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -128,9 +121,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
             reactiveWifi = wifiManager.getConnectionInfo().getSSID();
         }
-
-        dialogLoading.setMessage(getResources().getString(R.string.scanning));
-        dialogLoading.show();
 
         locationManager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -231,6 +221,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         Log.e("DEBUG", "onStop");
         try{
             ((MainActivity) getActivity()).create_openned = false;
+            if(wifiReciever != null){
+                getActivity().unregisterReceiver(wifiReciever);
+            }
         } catch (Exception e){
             Log.e("DEBUG", "onStop err: "+e.getMessage());
         }
@@ -238,55 +231,34 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showScanningDevices(){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         if(wifis.size() > 0){
             ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, wifis);
             listView.setAdapter(adapter);
-
-//            CharSequence[] items = wifis.toArray(new CharSequence[wifis.size()]);
-//            builder.setTitle("Danh sách thiết bị").setItems(items, new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int which) {
-//                    // The 'which' argument contains the index position
-//                    // of the selected item
-//                    dialog.dismiss();
-//                    Log.e(TAG, "===================> Wifi choose: "+which);
-//                    Log.e(TAG, "===================> Wifi choose: "+wifis.get(which).toString());
-//                    String ssid = wifis.get(which).toString();
-//
-//                    dialogLoading.setMessage(getResources().getString(R.string.connecting_to)+" "+ssid);
-//                    dialogLoading.show();
-//
-//                    boolean connected = ConnectToNetworkWPA(ssid, "11330232");
-//                    if(connected){
-//                        try{
-////                            new getDeviceInfo().execute();
-//                            Log.e(TAG, "===================> Webview start");
-//                            finalSSID = ssid;
-//                            times = 0;
-//                            checkActiveWifi();
-//                        } catch (Exception exx2){
-//                            Log.e(TAG, "===================> Wifi exx2: "+exx2.getMessage());
-//                        }
-//                    } else{
-//                        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
-//                        builder2.setMessage("Lỗi").setCancelable(true).create().show();
-//                    }
-//                    Log.e(TAG, "===================> Wifi choose: "+connected);
-////                    dialogLoading.dismiss();
-//                }
-//            });
         } else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Không tìm thấy. Hãy thử khởi động lại thiết bị")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
                         dialog.dismiss();
+                        dialogLoading.setMessage(getResources().getString(R.string.scanning));
+                        if(!dialogLoading.isShowing()){
+                            dialogLoading.show();
+                        }
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e("DEBUG", "rescan devices");
+                                flagScan = true;
+                                wifi.startScan();
+                            }
+                        }, 10000);
                     }
                 });
+            builder.create();
+            builder.show();
         }
-        dialogLoading.hide();
-        builder.create();
-        builder.show();
+        dialogLoading.dismiss();
         flagScan = false;
     }
 
@@ -318,7 +290,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
 //            if(flagScan){
 //                showScanningDevices();
 //            }
-            dialogLoading.hide();
+//            dialogLoading.dismiss();
             showScanningDevices();
         }
     }
@@ -386,6 +358,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                     mydb = new DBHelper(getActivity());
                     boolean ins = mydb.insertDevice(finalSSID.substring(finalSSID.indexOf("-") + 1), "", "", "", finalSSID, 1);
                     if(ins){
+                        getActivity().unregisterReceiver(wifiReciever);
+
                         Bundle arguments = new Bundle();
                         arguments.putInt("style", 1);
                         arguments.putString("custom_name", finalSSID);

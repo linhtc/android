@@ -62,5 +62,6 @@
     <string name="other">Xem thêm</string>
     <string name="account">Tài khoản</string>
     <string name="fully">Tất cả</string>
+    <string name="full_services">Tất cả dịch vụ</string>
     <string name="no_device">0 thiết bị</string>
 </resources>
