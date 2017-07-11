@@ -12,7 +12,7 @@
     android:paddingBottom="18dp"
     android:gravity="center_vertical"
     android:drawableStart="@drawable/plug32"
-    android:drawableEnd="@drawable/power24"
+    android:drawableEnd="@drawable/rightchevron24"
     android:layout_weight="1"
     android:textStyle="normal" >
 </TextView>

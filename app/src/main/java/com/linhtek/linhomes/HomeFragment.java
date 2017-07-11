@@ -17,6 +17,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 /**
  * Created by Admin on 04-06-2015.
@@ -51,34 +53,38 @@ public class HomeFragment extends Fragment {
         addListenerOnButton(v);
         ((MainActivity) getActivity()).setActionBarTitle("LINHOMES");
 
+//        LinearLayout btnSecurity = (LinearLayout)v.findViewById(R.id.container_btn_security);
+//        btnSecurity.setOnClickListener(this);
+
+//        SwitchFragment fragment = new SwitchFragment();
+//        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.frame, fragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+
         return v;
     }
 
     public void addListenerOnButton(View v) {
-
-        ImageButton btnSwitch = (ImageButton) v.findViewById(R.id.btnSwitch);
-        btnSwitch.setOnTouchListener(new View.OnTouchListener() {
-
+        LinearLayout btnControl = (LinearLayout) v.findViewById(R.id.container_btn_control);
+        btnControl.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
+                        LinearLayout view = (LinearLayout ) v;
                         view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
                         v.invalidate();
                         break;
                     }
-                    case MotionEvent.ACTION_UP:
-
-                        SwitchFragment fragment = new SwitchFragment();
-                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
                         break;
-
+                    }
                     case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
+                        LinearLayout view = (LinearLayout) v;
                         view.getBackground().clearColorFilter();
                         view.invalidate();
                         break;
@@ -86,108 +92,27 @@ public class HomeFragment extends Fragment {
                 }
                 return true;
             }
-
         });
 
-//        ImageButton btnCooker = (ImageButton) v.findViewById(R.id.btnCooker);
-//        btnCooker.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN: {
-//                    ImageButton view = (ImageButton ) v;
-//                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-//                    v.invalidate();
-//                    break;
-//                }
-//                case MotionEvent.ACTION_UP:
-//
-//                case MotionEvent.ACTION_CANCEL: {
-//                    ImageButton view = (ImageButton) v;
-//                    view.getBackground().clearColorFilter();
-//                    view.invalidate();
-//                    break;
-//                }
-//            }
-//            return true;
-//            }
-//
-//        });
-
-//        ImageButton btnAirCondition = (ImageButton) v.findViewById(R.id.btnAirCondition);
-//        btnAirCondition.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN: {
-//                    ImageButton view = (ImageButton ) v;
-//                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-//                    v.invalidate();
-//                    break;
-//                }
-//                case MotionEvent.ACTION_UP:
-//
-//
-//                case MotionEvent.ACTION_CANCEL: {
-//                    ImageButton view = (ImageButton) v;
-//                    view.getBackground().clearColorFilter();
-//                    view.invalidate();
-//                    break;
-//                }
-//            }
-//            return true;
-//            }
-//
-//        });
-
-        ImageButton btnFan = (ImageButton) v.findViewById(R.id.btnFan);
-        btnFan.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN: {
-                    ImageButton view = (ImageButton ) v;
-                    view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-                    v.invalidate();
-                    break;
-                }
-                case MotionEvent.ACTION_UP:
-
-                    // Your action here on button click
-
-                case MotionEvent.ACTION_CANCEL: {
-                    ImageButton view = (ImageButton) v;
-                    view.getBackground().clearColorFilter();
-                    view.invalidate();
-                    break;
-                }
-            }
-            return true;
-            }
-
-        });
-
-        ImageButton btnRefrigerator = (ImageButton) v.findViewById(R.id.btnRefrigerator);
-        btnRefrigerator.setOnTouchListener(new View.OnTouchListener() {
-
+        LinearLayout btnHealth = (LinearLayout) v.findViewById(R.id.container_btn_health);
+        btnHealth.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
+                        LinearLayout view = (LinearLayout ) v;
                         view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
                         v.invalidate();
                         break;
                     }
-                    case MotionEvent.ACTION_UP:
-
-                        // Your action here on button click
-
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
                     case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
+                        LinearLayout view = (LinearLayout) v;
                         view.getBackground().clearColorFilter();
                         view.invalidate();
                         break;
@@ -195,27 +120,27 @@ public class HomeFragment extends Fragment {
                 }
                 return true;
             }
-
         });
 
-        ImageButton btnLaundry = (ImageButton) v.findViewById(R.id.btnLaundry);
-        btnLaundry.setOnTouchListener(new View.OnTouchListener() {
-
+        LinearLayout btnMedia = (LinearLayout) v.findViewById(R.id.container_btn_media);
+        btnMedia.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton ) v;
+                        LinearLayout view = (LinearLayout ) v;
                         view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
                         v.invalidate();
                         break;
                     }
-                    case MotionEvent.ACTION_UP:
-
-                        // Your action here on button click
-
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
                     case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
+                        LinearLayout view = (LinearLayout) v;
                         view.getBackground().clearColorFilter();
                         view.invalidate();
                         break;
@@ -223,92 +148,148 @@ public class HomeFragment extends Fragment {
                 }
                 return true;
             }
-
         });
 
-//        ImageButton btnMicrowave = (ImageButton) v.findViewById(R.id.btnMicrowave);
-//        btnMicrowave.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN: {
-//                        ImageButton view = (ImageButton ) v;
-//                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-//                        v.invalidate();
-//                        break;
-//                    }
-//                    case MotionEvent.ACTION_UP:
-//
-//                        // Your action here on button click
-//
-//                    case MotionEvent.ACTION_CANCEL: {
-//                        ImageButton view = (ImageButton) v;
-//                        view.getBackground().clearColorFilter();
-//                        view.invalidate();
-//                        break;
-//                    }
-//                }
-//                return true;
-//            }
-//
-//        });
+        LinearLayout btnMore = (LinearLayout) v.findViewById(R.id.container_btn_more);
+        btnMore.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        LinearLayout view = (LinearLayout ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
-//        ImageButton btnTV = (ImageButton) v.findViewById(R.id.btnTV);
-//        btnTV.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN: {
-//                        ImageButton view = (ImageButton ) v;
-//                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-//                        v.invalidate();
-//                        break;
-//                    }
-//                    case MotionEvent.ACTION_UP:
-//
-//                        // Your action here on button click
-//
-//                    case MotionEvent.ACTION_CANCEL: {
-//                        ImageButton view = (ImageButton) v;
-//                        view.getBackground().clearColorFilter();
-//                        view.invalidate();
-//                        break;
-//                    }
-//                }
-//                return true;
-//            }
-//
-//        });
+        LinearLayout btnSecurity = (LinearLayout) v.findViewById(R.id.container_btn_security);
+        btnSecurity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        LinearLayout view = (LinearLayout ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
-//        ImageButton btnDishWasher = (ImageButton) v.findViewById(R.id.btnDishWasher);
-//        btnDishWasher.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN: {
-//                        ImageButton view = (ImageButton ) v;
-//                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-//                        v.invalidate();
-//                        break;
-//                    }
-//                    case MotionEvent.ACTION_UP:
-//
-//                        // Your action here on button click
-//
-//                    case MotionEvent.ACTION_CANCEL: {
-//                        ImageButton view = (ImageButton) v;
-//                        view.getBackground().clearColorFilter();
-//                        view.invalidate();
-//                        break;
-//                    }
-//                }
-//                return true;
-//            }
-//
-//        });
+        LinearLayout btnSetting = (LinearLayout) v.findViewById(R.id.container_btn_setting);
+        btnSetting.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        LinearLayout view = (LinearLayout ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        LinearLayout btnTemperature = (LinearLayout) v.findViewById(R.id.container_btn_temperature);
+        btnTemperature.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        LinearLayout view = (LinearLayout ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        LinearLayout btnTree = (LinearLayout) v.findViewById(R.id.container_btn_tree);
+        btnTree.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        LinearLayout view = (LinearLayout ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        LinearLayout view = (LinearLayout) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
     }
+
 }

@@ -76,18 +76,43 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                String item = (String)parent.getItemAtPosition(position);
-                Log.e("Websocket", "============> item clicked: " + item);
-                if(!item.equalsIgnoreCase(getResources().getString(R.string.not_found_device))){
-                    Bundle arguments = new Bundle();
-                    arguments.putInt("style", 1);
-                    arguments.putString("custom_name", item);
-                    DeviceFragment fragment = new DeviceFragment();
-                    fragment.setArguments(arguments);
-                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.frame, fragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+//                String item = (String)parent.getItemAtPosition(position);
+//                Log.e("Websocket", "============> item clicked: " + item);
+//                if(!item.equalsIgnoreCase(getResources().getString(R.string.not_found_device))){
+//                    Bundle arguments = new Bundle();
+//                    arguments.putInt("style", 1);
+//                    arguments.putString("custom_name", item);
+//                    DeviceFragment fragment = new DeviceFragment();
+//                    fragment.setArguments(arguments);
+//                    FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame, fragment);
+//                    fragmentTransaction.addToBackStack(null);
+//                    fragmentTransaction.commit();
+//                }
+
+                String ssid = (String)parent.getItemAtPosition(position);
+                if(!ssid.isEmpty()){
+                    Log.e("Websocket", "============> item clicked: " + ssid);
+                    dialogLoading.setMessage(getResources().getString(R.string.connecting_to)+" "+ssid);
+                    dialogLoading.show();
+
+                    boolean connected = ConnectToNetworkWPA(ssid, "11330232");
+                    if(connected){
+                        try{
+                            Log.e(TAG, "===================> Webview start");
+                            finalSSID = ssid;
+                            times = 0;
+                            checkActiveWifi();
+                            if(wifiReciever != null){
+                                getActivity().unregisterReceiver(wifiReciever);
+                            }
+                        } catch (Exception exx2){
+                            Log.e(TAG, "===================> Wifi exx2: "+exx2.getMessage());
+                        }
+                    } else{
+                        AlertDialog.Builder builder2 = new AlertDialog.Builder(getActivity());
+                        builder2.setMessage("Lỗi").setCancelable(true).create().show();
+                    }
                 }
             }
         });
@@ -115,9 +140,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
             try{
                 Log.e("DEBUG", "==> scan");
                 dialogLoading.setMessage(getResources().getString(R.string.scanning));
-                dialogLoading.show();
+                if(!dialogLoading.isShowing()){
+                    dialogLoading.show();
+                }
                 wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                if (wifi.isWifiEnabled() == false){
+                if (!wifi.isWifiEnabled()){
                     Toast.makeText(getActivity(), "Đã bật WiFi", Toast.LENGTH_LONG).show();
                     wifi.setWifiEnabled(true);
                 }
@@ -144,9 +171,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                 } else{
                     try{
                         dialogLoading.setMessage(getResources().getString(R.string.scanning));
-                        dialogLoading.show();
+                        if(!dialogLoading.isShowing()){
+                            dialogLoading.show();
+                        }
                         wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                        if (wifi.isWifiEnabled() == false){
+                        if (!wifi.isWifiEnabled()){
                             Toast.makeText(getActivity(), "Đã bật WiFi", Toast.LENGTH_LONG).show();
                             wifi.setWifiEnabled(true);
                         }
@@ -176,9 +205,12 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
             } else{
                 try{
                     openGPS = false;
-                    dialogLoading = ProgressDialog.show(getActivity(), "", "Đang tìm thiết bị...", true);
+                    dialogLoading.setMessage(getResources().getString(R.string.scanning));
+                    if(!dialogLoading.isShowing()){
+                        dialogLoading.show();
+                    }
                     wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    if (wifi.isWifiEnabled() == false){
+                    if (!wifi.isWifiEnabled()){
                         Toast.makeText(getActivity(), "Đã bật WiFi", Toast.LENGTH_LONG).show();
                         wifi.setWifiEnabled(true);
                     }
@@ -269,7 +301,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                 try{
                     if(!wifiScanList.get(i).SSID.equals(null)){
                         String ssid = wifiScanList.get(i).SSID;
-                        if(ssid.contains("Switch-") == true){
+                        if(ssid.contains("Switch-")){
                             if(!db.checkDevice(ssid)){
                                 wifis.add(ssid);
                             }
@@ -374,7 +406,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                     } else{
                         dialogLoading.dismiss();
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("Không kết nối được.Hãy khởi động máy, thiết bị và thử lại")
+                        builder.setMessage("Không kết nối được. Hãy khởi động máy, thiết bị và thử lại")
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();

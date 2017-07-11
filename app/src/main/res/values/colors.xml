@@ -4,13 +4,14 @@
     <color name="PrimaryDarkColor">#1976D2</color>
     <color name="customColor">#fafafa</color>
 
-    <color name="primary">#465568</color>
+    <color name="primary">#201e20</color>
     <color name="primary_dark">#8A97A7</color>
     <color name="primary_darker">#97A2A8</color>
     <color name="accent">#FFFFFF</color>
 
-    <color name="text_title">#8D9AAA</color>
-    <color name="text_content">#6C7989</color>
+    <color name="body_bg">#151315</color>
+    <color name="text_title">#ebe9eb</color>
+    <color name="text_content">#703e23</color>
     <color name="btn_bg">#a6b2b6</color>
 
     <color name="black">#000000</color>

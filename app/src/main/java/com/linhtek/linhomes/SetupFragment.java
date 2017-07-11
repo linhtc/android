@@ -94,7 +94,10 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         v.setFocusableInTouchMode(true);
         v.requestFocus();
 
-        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+        dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        dialogLoading.setMessage(getResources().getString(R.string.connecting));
+        dialogLoading.show();
+//        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -117,19 +120,18 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             deviceSSID = device.getString(device.getColumnIndex("ws"));
             devicePw = device.getString(device.getColumnIndex("wp"));
             customName = (EditText)v.findViewById(R.id.custom_name);
-            customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
+//            customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
 //            customSSID = (EditText)v.findViewById(R.id.custom_ssid);
 //            inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
 //            customSSID.setHint(getResources().getString(R.string.device_ssid)+ ": "+deviceSSID);
             customPw = (EditText)v.findViewById(R.id.custom_pw);
-            customPw.setHint(getResources().getString(R.string.device_pw)+ ": "+devicePw);
+//            customPw.setHint(getResources().getString(R.string.device_pw)+ ": "+devicePw);
         }
 
         ((MainActivity) getActivity()).setActionBarTitle("SETUP DEVICES");
         Button btnSetupApply = (Button) v.findViewById(R.id.btnSetupApply);
         btnSetupApply.setOnClickListener(this);
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
 
         if(scannedWifi == null){
             scannedWifi = new ArrayList<String>();
@@ -168,7 +170,11 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                     db.updateDevice(deviceName, optionName, deviceSSID, devicePw);
                     if(!inputSSID.getSelectedItem().toString().isEmpty() && !customPw.getText().toString().isEmpty()){
                         flag_apply = true;
-                        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+//                        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.processing), true);
+                        dialogLoading.setMessage(getResources().getString(R.string.processing));
+                        if(!dialogLoading.isShowing()){
+                            dialogLoading.show();
+                        }
                         state = 1;
                         JSONObject req = new JSONObject();
                         req.put("cmd", 2);

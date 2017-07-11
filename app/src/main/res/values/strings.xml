@@ -50,9 +50,17 @@
     <string name="create_acc">Tạo tài khoản</string>
     <string name="re_pw_wrong">Xác nhận MK chưa đúng</string>
 
+    <string name="plug">Điều khiển</string>
+    <string name="fan">Quạt máy</string>
     <string name="security">An ninh</string>
     <string name="weather">Thời tiết</string>
-    <string name="fan">Quạt máy</string>
-    <string name="plug">Công tắc</string>
+    <string name="media">Giải trí</string>
+    <string name="control">Điều khiển</string>
+    <string name="health">Sức khỏe</string>
+    <string name="setting">Cài đặt</string>
+    <string name="tree">Cây cảnh</string>
+    <string name="other">Xem thêm</string>
+    <string name="account">Tài khoản</string>
+    <string name="fully">Tất cả</string>
     <string name="no_device">0 thiết bị</string>
 </resources>

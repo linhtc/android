@@ -1,168 +1,390 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="center"
-    android:id="@+id/content_main"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingTop="20dp"
-    android:paddingBottom="30dp"
-    android:background="@color/primary">
+    android:background="@color/body_bg"
+    android:fitsSystemWindows="true">
 
-    <TableRow
+    <TableLayout
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:id="@+id/content_main"
         android:layout_width="fill_parent"
-        android:layout_height="0px"
-        android:layout_weight="1" >
+        android:layout_height="wrap_content"
+        android:background="@color/body_bg">
 
-        <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
+        <TableRow
+            android:layout_marginBottom="2dp"
+            android:background="@color/body_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" >
 
-            <ImageButton
-                android:id="@+id/btnLaundry"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/bg_active"
-                android:src="@drawable/cctv" />
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_security"
+                android:layout_marginEnd="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
-            <TextView
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/security"
-                android:textColor="#8D9AAA"
-                android:textAlignment="center" />
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/cctv64" />
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_device"
-                android:textColor="@color/text_content"
-                android:textAlignment="center" />
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/security"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
 
-        <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
+            </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnRefrigerator"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/bg_active"
-                android:src="@drawable/temperature" />
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_temperature"
+                android:layout_marginStart="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
-            <TextView
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/weather"
-                android:textColor="@color/text_title"
-                android:textAlignment="center" />
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/thermometer64" />
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_device"
-                android:textColor="@color/text_content"
-                android:textAlignment="center" />
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weather"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
 
-    </TableRow>
+            </LinearLayout>
 
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="0px"
-        android:layout_weight="1" >
+        </TableRow>
 
-        <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
+        <TableRow
+            android:layout_marginBottom="2dp"
+            android:background="@color/body_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" >
 
-            <ImageButton
-                android:id="@+id/btnFan"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/bg_active"
-                android:src="@drawable/fan" />
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_media"
+                android:layout_marginEnd="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
-            <TextView
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fan"
-                android:textColor="#8D9AAA"
-                android:textAlignment="center" />
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/monitor64" />
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_device"
-                android:textColor="#6C7989"
-                android:textAlignment="center" />
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/media"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
 
-        <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
+            </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnSwitch"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/bg_active"
-                android:src="@drawable/plug" />
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_control"
+                android:layout_marginStart="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
-            <TextView
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/plug"
-                android:textColor="#8D9AAA"
-                android:textAlignment="center" />
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/plug64" />
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_device"
-                android:textColor="#6C7989"
-                android:textAlignment="center" />
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/control"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
 
-    </TableRow>
+            </LinearLayout>
 
-</TableLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="2dp"
+            android:background="@color/body_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_health"
+                android:layout_marginEnd="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/health64" />
+
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/health"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_tree"
+                android:layout_marginStart="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/wateringcan64" />
+
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tree"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_device"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="2dp"
+            android:background="@color/body_bg"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_setting"
+                android:layout_marginEnd="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/settings64" />
+
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:clickable="true"
+                android:id="@+id/container_btn_more"
+                android:layout_marginStart="1dp"
+                android:background="@color/primary"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+                <ImageButton
+                    android:clickable="false"
+                    android:contentDescription="@string/app_name"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/paperplane64" />
+
+                <TextView
+                    android:clickable="false"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/other"
+                    android:textColor="@color/text_title"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:clickable="false"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fully"
+                    android:textColor="@color/text_content"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>

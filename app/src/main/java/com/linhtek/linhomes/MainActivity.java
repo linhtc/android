@@ -36,6 +36,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 //import static android.text.Html.FROM_HTML_OPTION_USE_CSS_COLORS;
 
 public class MainActivity extends AppCompatActivity {
@@ -173,6 +175,18 @@ public class MainActivity extends AppCompatActivity {
 //        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
+//        Bundle arguments = new Bundle();
+//        arguments.putInt("style", 1);
+//        arguments.putString("custom_name", "test 123");
+//        arguments.putString("reactive_wifi", "abc");
+//        arguments.putStringArrayList("scanned_list", new ArrayList<String>());
+//        SetupFragment fragment = new SetupFragment();
+//        fragment.setArguments(arguments);
+//        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.frame, fragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+
     }
 
     @Override
@@ -188,19 +202,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setActionBarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(getLayoutInflater().inflate(R.layout.custom_actionbar, null),
-                new ActionBar.LayoutParams(
-                        ActionBar.LayoutParams.WRAP_CONTENT,
-                        ActionBar.LayoutParams.MATCH_PARENT,
-                        Gravity.CENTER
-                )
-        );
-        getSupportActionBar().setTitle(title);
-        TextView tv = (TextView)findViewById(R.id.actionbar_textview);
-        tv.setText(title);
+        try{
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(getLayoutInflater().inflate(R.layout.custom_actionbar, null),
+                    new ActionBar.LayoutParams(
+                            ActionBar.LayoutParams.WRAP_CONTENT,
+                            ActionBar.LayoutParams.MATCH_PARENT,
+                            Gravity.CENTER
+                    )
+            );
+            getSupportActionBar().setTitle(title);
+            TextView tv = (TextView)findViewById(R.id.actionbar_textview);
+            tv.setText(title);
+        } catch (Exception exx){
+            Log.e("MainActivity", "============> Exception: "+exx.getMessage());
+        }
     }
 
     public void setUserInfo() {
