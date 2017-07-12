@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">LinHomes</string>
+    <string name="app_name_upper">LINHOMES</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -62,6 +63,9 @@
     <string name="other">Xem thêm</string>
     <string name="account">Tài khoản</string>
     <string name="fully">Tất cả</string>
+    <string name="on">Bật</string>
+    <string name="off">Tắt</string>
+    <string name="main_screen">Màn hình chính</string>
     <string name="full_services">Tất cả dịch vụ</string>
     <string name="no_device">0 thiết bị</string>
 </resources>

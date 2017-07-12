@@ -138,8 +138,10 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         }
         inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
         if(scannedWifi.size() > 0){
-            dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
+//            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
+            dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
             inputSSID.setAdapter(dataAdapter);
         } else{
             wifiReciever = new WifiScanReceiver();
@@ -232,8 +234,10 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                     if(scannedWifi.size() > 0){
-                        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
-                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
+//                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
+                        dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
                         inputSSID.setAdapter(dataAdapter);
 //                        getActivity().unregisterReceiver(wifiReciever);
                     }

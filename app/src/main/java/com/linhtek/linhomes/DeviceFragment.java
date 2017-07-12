@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,12 +21,14 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +55,7 @@ import static android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 /**
  * Created by Admin on 04-06-2015.
  */
-public class DeviceFragment extends Fragment implements View.OnClickListener {
+public class DeviceFragment extends Fragment {
 
     ProgressDialog dialogLoading;
     private static final String TAG = "MainActivity";
@@ -62,7 +66,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     String deviceSSID;
     String deviceID;
     TextView tvCustomName;
-    SwitchButton btnDeviceSwitch;
+    TextView tvState;
+    ImageButton btnDeviceSwitch;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
     boolean flagControl = false;
@@ -84,7 +89,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.device_fragment,container,false);
 
-        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+//        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+        dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        dialogLoading.setMessage(getResources().getString(R.string.connecting));
+        dialogLoading.show();
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
@@ -98,8 +106,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             styString = "switchs/";
         }
         Log.e("Websocket", "============> customName: " + customName);
-        tvCustomName = (TextView)v.findViewById(R.id.custom_name);
-        tvCustomName.setText(customName);
+//        tvCustomName = (TextView)v.findViewById(R.id.custom_name);
+        tvState = (TextView)v.findViewById(R.id.tv_status);
+//        tvCustomName.setText(customName);
 
         db = new DBHelper(getActivity());
         Cursor device = db.getDevice(style, customName);
@@ -118,7 +127,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         }
         device.close();
 
-        ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
+//        ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
+        ((MainActivity) getActivity()).setActionBarTitle(customName);
         wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         activeNetwork = conMgr.getActiveNetworkInfo();
@@ -126,15 +136,22 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             flagConnected = true;
             if(deviceIP.isEmpty()){
                 dialogLoading.setMessage(getResources().getString(R.string.device_setting));
+                if(!dialogLoading.isShowing()){
+                    dialogLoading.show();
+                }
             } else{
                 connectWebSocket();
             }
         } else{
             flagConnected = false;
-            if (wifiManager.isWifiEnabled() == false){
+            if (!wifiManager.isWifiEnabled()){
                 Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.turn_on_wifi), Toast.LENGTH_LONG).show();
                 wifiManager.setWifiEnabled(true);
-                dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+//                dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
+                dialogLoading.setMessage(getResources().getString(R.string.processing));
+                if(!dialogLoading.isShowing()){
+                    dialogLoading.show();
+                }
             }
         }
 
@@ -156,9 +173,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                             db.updateDevice(deviceName, deviceIP);
                             connectWebSocket();
                         }
-                        if(!map.get("ps").toString().isEmpty()){
-//                        Log.e(TAG, "=============> FCM response: " + map.get("ps").toString());
-                        }
                     } catch (Exception e){
                         Log.e("FCM err", e.getMessage());
                     }
@@ -172,76 +186,124 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             myRef.addValueEventListener(mListener);
         }
 
-        ImageButton btn = (ImageButton)v.findViewById(R.id.btnConfig);
-        btn.setOnClickListener(this);
-        btnDeviceSwitch = (SwitchButton)v.findViewById(R.id.btnDeviceSwitch);
-        btnDeviceSwitch.setChecked(state == 1 ? true : false);
-        btnDeviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.e(TAG, "=============> mode: " + buttonView.isInTouchMode());
-                if(buttonView.isInTouchMode()){
-                    conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                    activeNetwork = conMgr.getActiveNetworkInfo();
-                    if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
-                        flagControl = true;
-                        Log.e(TAG, "=============> switch to: " + isChecked);
-                        if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"") && flagWSconnected){
-                            try{
-                                JSONObject req = new JSONObject();
-                                req.put("cmd", 3);
-                                req.put("ps", 18);
-                                req.put("req", isChecked ? 1 : 0);
-                                Log.e("Websocket", "==> touched req: "+req.toString());
-                                mWebSocketClient.send(req.toString());
-                            } catch (Exception e){
-                                Log.e("mWebSocketClient", "============> err: " + e.getMessage());
-                            }
-                        }
-                        Log.e(TAG, "=============> update :"+ deviceName+": "+isChecked);
-                        db.updateDevice(deviceName, isChecked ? 1 : 0);
-                        Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
-                        myRef.updateChildren(childUpdates);
-                        return;
-                    } else{
-                        flagConnected = false;
-                        if (wifiManager.isWifiEnabled() == false){
-                            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.turn_on_wifi), Toast.LENGTH_LONG).show();
-                            wifiManager.setWifiEnabled(true);
-                        } else{
-                            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
-                        }
-                        if(dialogLoading.isShowing()){
-                            dialogLoading.dismiss();
-                        }
-                        return;
-                    }
-                }
-                return;
-            }
-        });
-
+        tvState.setText(state == 1 ? getResources().getString(R.string.on) : getResources().getString(R.string.off));
+        addListenerOnButton(v);
         return v;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.btnConfig:
-                Bundle arguments = new Bundle();
-                arguments.putInt("style", style);
-                arguments.putString("custom_name", customName);
+    public void addListenerOnButton(View v) {
+        ImageButton btnSwitch = (ImageButton)v.findViewById(R.id.btnDeviceSwitch);
+        btnSwitch.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        ImageButton view = (ImageButton ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+
+                        String strState = tvState.getText().toString();
+                        boolean isChecked = false;
+                        if(strState.equalsIgnoreCase(getResources().getString(R.string.off))){
+                            isChecked = true;
+                        }
+                        tvState.setText(!isChecked ? getResources().getString(R.string.off) : getResources().getString(R.string.on));
+
+                        conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        activeNetwork = conMgr.getActiveNetworkInfo();
+                        if (activeNetwork != null && activeNetwork.isConnected() && !wifiManager.getConnectionInfo().getSSID().isEmpty()) {
+                            flagControl = true;
+                            Log.e(TAG, "=============> switch to: " + isChecked);
+                            if(wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+deviceSSID+"\"") && flagWSconnected){
+                                try{
+                                    JSONObject req = new JSONObject();
+                                    req.put("cmd", 3);
+                                    req.put("ps", 18);
+                                    req.put("req", isChecked ? 1 : 0);
+                                    Log.e("Websocket", "==> touched req: "+req.toString());
+                                    mWebSocketClient.send(req.toString());
+                                } catch (Exception e){
+                                    Log.e("mWebSocketClient", "============> err: " + e.getMessage());
+                                }
+                            }
+                            Log.e(TAG, "=============> update :"+ deviceName+": "+isChecked);
+                            db.updateDevice(deviceName, isChecked ? 1 : 0);
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            childUpdates.put("/ps/18/req", isChecked ? 1 : 0);
+                            myRef.updateChildren(childUpdates);
+                        } else{
+                            flagConnected = false;
+                            if (wifiManager.isWifiEnabled() == false){
+                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.turn_on_wifi), Toast.LENGTH_LONG).show();
+                                wifiManager.setWifiEnabled(true);
+                            } else{
+                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
+                            }
+                            if(dialogLoading.isShowing()){
+                                dialogLoading.dismiss();
+                            }
+                        }
+
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        ImageButton btnConfig = (ImageButton)v.findViewById(R.id.btnConfig);
+        btnConfig.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        ImageButton view = (ImageButton ) v;
+                        view.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+
+                        Bundle arguments = new Bundle();
+                        arguments.putInt("style", style);
+                        arguments.putString("custom_name", customName);
 //                arguments.putString("reactive_wifi", reactiveWifi);
 //                arguments.putStringArrayList("scanned_list", scannedWifi);
-                SetupFragment fragment = new SetupFragment();
-                fragment.setArguments(arguments);
-                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, fragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                break;
-            default:break;
-        }
+                        SetupFragment fragment = new SetupFragment();
+                        fragment.setArguments(arguments);
+                        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -333,7 +395,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                             mWebSocketClient.send(req.toString());
                             if(res.has("pin18")){
                                 state = res.getInt("pin18");
-                                btnDeviceSwitch.setChecked(state == 1 ? true : false);
+                                tvState.setText(state == 1 ? getResources().getString(R.string.on) : getResources().getString(R.string.off));
                             }
                         }
                     }

@@ -1,92 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/body_bg"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#FFFFFF"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent">
 
-    <ImageButton
-        android:layout_width="fill_parent"
-        android:layout_height="150dp"
-        android:background="@drawable/bg_active"
-        android:src="@drawable/plug" />
-
-    <TableLayout
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:id="@+id/content_main"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:layout_marginTop="120dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF">
+        android:layout_alignParentTop="true" >
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="48sp"
+            android:textColor="@color/text_title"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/custom_name"
-                android:layout_width="fill_parent"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="9dp"
-                android:layout_weight="1"
-                android:text="Device name..."
-                android:textSize="14dp"
-                android:textStyle="normal" />
+        <ImageButton
+            android:id="@+id/btnDeviceSwitch"
+            android:contentDescription="@string/off"
+            android:layout_centerInParent="true"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/bg_active" />
 
-            <ImageButton
-                android:id="@+id/btnConfig"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:scaleType="fitEnd"
-                android:src="@drawable/settings32"
-                android:background="@null"
-                android:textAlignment="viewEnd" />
+    </RelativeLayout>
 
-        </TableRow>
+    <RelativeLayout
+        android:id="@+id/InnerRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <ImageButton
+            android:layout_marginBottom="30dp"
+            android:id="@+id/btnConfig"
+            android:contentDescription="@string/app_name"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/settings32" />
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="9dp"
-                android:layout_weight="1"
-                android:textSize="14dp"
-                android:textStyle="normal" />
+    </RelativeLayout>
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="9dp"
-                android:layout_weight="1"
-                android:text="@string/control_status"
-                android:textSize="14dp"
-                android:textStyle="normal" />
-
-            <com.kyleduo.switchbutton.SwitchButton
-                android:id="@+id/btnDeviceSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-
-        </TableRow>
-
-    </TableLayout>
-
-</LinearLayout>
+</RelativeLayout>

@@ -14,38 +14,28 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
-        <ImageView android:src="@drawable/logos"
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/logos"
             android:layout_width="wrap_content"
             android:layout_height="72dp"
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal"/>
 
-        <!-- Name Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/custom_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="@string/device_name"/>
-        </android.support.design.widget.TextInputLayout>
-
         <!-- mobile number -->
-        <android.support.design.widget.TextInputLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
             <Spinner
-                android:layout_margin="10dp"
+                android:layout_gravity="start"
+                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/input_ssid"
                 android:hint="@string/device_ssid"/>
-        </android.support.design.widget.TextInputLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
         <!-- Password Label -->
         <android.support.design.widget.TextInputLayout
@@ -58,6 +48,19 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:hint="@string/device_pw"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Name Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/custom_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="@string/device_name"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
