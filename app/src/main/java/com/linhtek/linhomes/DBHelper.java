@@ -69,8 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getUser(String phone, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery( "select * from users where phone = ? and pw = ? limit 1", new String[] { phone, password } );
-        return res;
+        return db.rawQuery( "select * from users where phone = ? and pw = ? limit 1", new String[] { phone, password } );
     }
 
     public boolean updateUser (String phone, Integer status) {
@@ -107,9 +106,22 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean checkExistDevice(String ssid) {
+    public boolean insertDevice (String ap_ssid, String ap_ip, String device_name,  String custom_name, Integer status, Integer style) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("ws", ap_ssid);
+        contentValues.put("wi", ap_ip);
+        contentValues.put("device_name", device_name);
+        contentValues.put("custom_name", custom_name);
+        contentValues.put("sta", status);
+        contentValues.put("sty", style);
+        db.insert("devices", null, contentValues);
+        return true;
+    }
+
+    public boolean checkExistDevice(String deviceName) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery( "select * from devices where ap_ssid="+ssid+"", null );
+        Cursor res = db.rawQuery( "select * from devices where device_name=?", new String[] { deviceName } );
         if(res.getCount() > 0){
             return true;
         }
@@ -118,20 +130,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery( "select * from devices where id="+id+"", null );
-        return res;
+        return db.rawQuery( "select * from devices where id="+id+"", null );
     }
 
     public Cursor getDeviceToSetup() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery( "select * from devices where sta = 0 limit 1", null );
-        return res;
+        return db.rawQuery( "select * from devices where sta = 0 limit 1", null );
     }
 
     public int numberOfRows(){
         SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, "devices");
-        return numRows;
+        return (int) DatabaseUtils.queryNumEntries(db, "devices");
     }
 
     public boolean updateDevice (String device_name, String custom_name, String ssid, String pw) {
@@ -167,9 +176,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getDevice(Integer style, String custom_name) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery( "select * from devices where sty = ? and custom_name = ? limit 1",
+        return db.rawQuery( "select * from devices where sty = ? and custom_name = ? limit 1",
                 new String[] { Integer.toString(style), custom_name } );
-        return res;
     }
     public boolean checkDevice(String device_name) {
         SQLiteDatabase db = this.getReadableDatabase();

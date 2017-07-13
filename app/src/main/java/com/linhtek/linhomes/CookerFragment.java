@@ -479,15 +479,15 @@ public class CookerFragment extends Fragment implements View.OnClickListener {
 
                     DBHelper mydb;
                     mydb = new DBHelper(getActivity());
-                    if(!mydb.checkExistDevice(finalSSID)){
-                        // insert device to db
-                        mydb.insertDevice(
-                                response.getString("firebase"), response.getString("ap_ssid"),
-                                response.getString("ap_pw"), response.getString("ap_ip"), response.getString("device_name"), 1
-                        );
-                    } else{
-                        // update device to db
-                    }
+//                    if(!mydb.checkExistDevice(finalSSID)){
+//                        // insert device to db
+//                        mydb.insertDevice(
+//                                response.getString("firebase"), response.getString("ap_ssid"),
+//                                response.getString("ap_pw"), response.getString("ap_ip"), response.getString("device_name"), 1
+//                        );
+//                    } else{
+//                        // update device to db
+//                    }
                 }
 
             } catch (Exception e){

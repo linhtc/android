@@ -3,10 +3,12 @@ package com.linhtek.linhomes;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,14 +20,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by Admin on 04-06-2015.
  */
 public class HomeFragment extends Fragment {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "HomeFragment";
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    ValueEventListener mListener;
+    DBHelper db;
+    boolean flagRm = false;
 
     @Nullable
     @Override
@@ -51,16 +65,51 @@ public class HomeFragment extends Fragment {
         });
 
         addListenerOnButton(v);
-        ((MainActivity) getActivity()).setActionBarTitle("LINHOMES");
+        ((MainActivity) getActivity()).setActionBarTitle(getResources().getString(R.string.app_name_upper));
 
-//        LinearLayout btnSecurity = (LinearLayout)v.findViewById(R.id.container_btn_security);
-//        btnSecurity.setOnClickListener(this);
+        db = new DBHelper(getActivity());
+        Cursor activeUser = db.getActiveUser();
+        if(activeUser.getCount() > 0){
+            if(activeUser.moveToFirst()){
+                String phone = activeUser.getString(activeUser.getColumnIndex("phone"));
+                database = FirebaseDatabase.getInstance();
+                myRef = database.getReference("users/"+phone+"/devices");
+                mListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        try{
+                            if(dataSnapshot.hasChildren()){
+                                for(DataSnapshot device : dataSnapshot.getChildren() ){
+                                    Log.e("FCM", "response device ==========> "+device.toString());
+                                    if(!db.checkExistDevice(device.getKey())){
+                                        flagRm = true;
+                                        Log.e("FCM", "response insertDevice ==========> "+device.getKey());
+                                        String cn = device.child("cn").getValue().toString();
+                                        String wi = device.child("wi").getValue().toString();
+                                        String ws = device.child("ws").getValue().toString();
+                                        Long sta = (Long) device.child("sta").getValue();
+                                        Long sty = (Long) device.child("sty").getValue();
+                                        db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                                    }
+                                }
+                                myRef.removeEventListener(mListener);
+                            }
+                            Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());
+                        } catch (Exception e){
+                            Log.e("FCM err", e.getMessage());
+                        }
+                    }
 
-//        SwitchFragment fragment = new SwitchFragment();
-//        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-//        fragmentTransaction.replace(R.id.frame, fragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.e("FCM err", "=============> Failed to read value.", error.toException());
+                    }
+                };
+                myRef.addValueEventListener(mListener);
+            }
+        }
+        activeUser.close();
+//        db.close();
 
         return v;
     }
@@ -297,6 +346,17 @@ public class HomeFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("DEBUG", "onStop");
+        try{
+            myRef.removeEventListener(mListener);
+        } catch (Exception e){
+            Log.e("DEBUG", "onStop err: "+e.getMessage());
+        }
+        super.onStop();
     }
 
 }

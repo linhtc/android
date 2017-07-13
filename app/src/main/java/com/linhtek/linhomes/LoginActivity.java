@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -74,32 +75,25 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try{
                     if(dataSnapshot.hasChildren()){
-                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                        Log.e("FCM", "response hasChildren ==========> "+map.toString());
-                        for (Map.Entry<String, Object> entry : map.entrySet()) {
-//                            String key = entry.getKey();
-                            Object itemUser = entry.getValue();
-                            if(!itemUser.toString().isEmpty()){
-                                JSONObject user = new JSONObject(itemUser.toString());
-                                Log.e("FCM", "response user ==========> "+user.toString());
-                                if(user.has("name") && user.has("phone") && user.has("pw")){
-                                    Log.e("FCM", "response user has ==========> "+user.getString("phone"));
-                                    if(!db.checkExistUser(user.getString("phone"))){
-                                        Log.e("FCM", "response insertUser ==========> "+user.getString("phone"));
-                                        db.insertUser(user.getString("name"), user.getString("phone"), user.getString("pw"), 0);
-                                    }
+                        for(DataSnapshot child : dataSnapshot.getChildren() ){
+                            if(child.hasChild("name") && child.hasChild("phone") && child.hasChild("pw")){
+                                if(!db.checkExistUser(child.child("phone").getValue().toString())){
+                                    String childName = child.child("name").getValue().toString();
+                                    String childPhone = child.child("phone").getValue().toString();
+                                    String childPw = child.child("pw").getValue().toString();
+                                    Log.e("FCM", "response insertUser ==========> "+childPhone);
+                                    db.insertUser(childName, childPhone, childPw, 0);
                                 }
                             }
+//                            if(child.hasChild("devices")){
+//                                for(DataSnapshot device : child.child("devices").getChildren() ){
+//                                    Log.e("FCM", "response device ==========> "+device.getKey());
+//                                    if(!db.checkExistDevice(device.getKey())){
+//                                        Log.e("FCM", "response insertDevice ==========> "+device.getKey());
+//                                    }
+//                                }
+//                            }
                         }
-//                        Map<String, Object> childUpdates = new HashMap<>();
-//                        childUpdates.put("name", name);
-//                        childUpdates.put("pw", pw);
-//                        childUpdates.put("phone", dataSnapshot.getKey());
-//                        myRef.updateChildren(childUpdates);
-//                        myRef.removeEventListener(mListener);
-//                        DBHelper db = new DBHelper(getBaseContext());
-//                        db.insertUser(name, ph, pw);
-//                        Log.e("FCM", "update database OK");
                     }
                     Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());
                 } catch (Exception e){
@@ -163,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK, null);
                 this.finish();
             }
         }
@@ -176,6 +171,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
+        setResult(RESULT_OK, null);
         finish();
     }
 

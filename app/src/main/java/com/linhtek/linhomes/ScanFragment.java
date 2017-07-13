@@ -1,5 +1,6 @@
 package com.linhtek.linhomes;
 
+import android.*;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,6 +19,8 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +65,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
 
         v.setFocusableInTouchMode(true);
         v.requestFocus();
+
+        checkAllRequirePermission();
 
         DBHelper mydb;
         mydb = new DBHelper(getActivity().getBaseContext());
@@ -264,34 +270,63 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
 
     private class WifiScanReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {
-            Log.e(TAG, "===================> Wifi scan receive: ");
-            List<ScanResult> wifiScanList = wifi.getScanResults();
-            Log.e(TAG, "===================> "+ wifiScanList.size());
-            wifis  = new ArrayList<String>();
-            scannedWifi = new ArrayList<String>();
-            for(int i = 0; i < wifiScanList.size(); i++) {
-                try{
-                    if(!wifiScanList.get(i).SSID.equals(null)){
-                        String ssid = wifiScanList.get(i).SSID;
-                        if(ssid.contains("Switch-")){
-                            if(!db.checkDevice(ssid)){
-                                wifis.add(ssid);
+            if(((MainActivity) getActivity()).NOT_ALLOW_PERMISSION){
+                if(dialogLoading.isShowing()){
+                    dialogLoading.dismiss();
+                }
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Chưa xác nhận quyền truy cập. Nhấn OK để xác nhận")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                                checkAllRequirePermission();
+                                dialogLoading.setMessage(getResources().getString(R.string.scanning));
+                                if(!dialogLoading.isShowing()){
+                                    dialogLoading.show();
+                                }
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.e("DEBUG", "rescan devices");
+                                        flagScan = true;
+                                        wifi.startScan();
+                                    }
+                                }, 10000);
+                            }
+                        });
+                builder.create();
+                builder.show();
+            } else{
+                Log.e(TAG, "===================> Wifi scan receive: ");
+                List<ScanResult> wifiScanList = wifi.getScanResults();
+                Log.e(TAG, "===================> "+ wifiScanList.size());
+                wifis  = new ArrayList<String>();
+                scannedWifi = new ArrayList<String>();
+                for(int i = 0; i < wifiScanList.size(); i++) {
+                    try{
+                        if(!wifiScanList.get(i).SSID.equals(null)){
+                            String ssid = wifiScanList.get(i).SSID;
+                            if(ssid.contains("Switch-")){
+                                if(!db.checkDevice(ssid)){
+                                    wifis.add(ssid);
+                                }
+                            }
+                            if(!ssid.isEmpty()){
+                                scannedWifi.add(ssid);
                             }
                         }
-                        if(!ssid.isEmpty()){
-                            scannedWifi.add(ssid);
-                        }
+                    } catch (Exception exx){
+                        Log.e(TAG, "===================> "+ exx.getMessage());
                     }
-                } catch (Exception exx){
-                    Log.e(TAG, "===================> "+ exx.getMessage());
                 }
-            }
 
 //            if(flagScan){
 //                showScanningDevices();
 //            }
 //            dialogLoading.dismiss();
-            showScanningDevices();
+                showScanningDevices();
+            }
         }
     }
 
@@ -410,6 +445,19 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                 });
         alert = builder.create();
         alert.show();
+    }
+
+    public void checkAllRequirePermission(){
+        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.INTERNET}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+        } else if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CHANGE_WIFI_STATE}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+        } else if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+        }
     }
 
 }

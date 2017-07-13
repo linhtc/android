@@ -46,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
-    private static final int PERMISSION_REQUIREMENT = 0;
+    public int PERMISSION_REQUIREMENT = 0;
     private  boolean logging = false;
     public boolean create_openned = false;
+    public boolean NOT_ALLOW_PERMISSION = false;
+    private static final int REQUEST_SIGNUP = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,34 +188,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        checkAllRequirePermission();
-
         DBHelper db = new DBHelper(getBaseContext());
         Cursor activeUser = db.getActiveUser();
         if(activeUser.getCount() < 1){
             logging = true;
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+//            startActivity(intent);
+            startActivityForResult(intent, REQUEST_SIGNUP);
+        } else{
+            HomeFragment fragment = new HomeFragment();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame, fragment);
+            fragmentTransaction.commit();
+//            checkAllRequirePermission();
         }
         activeUser.close();
         db.close();
-
-        HomeFragment fragment = new HomeFragment();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame, fragment);
-        fragmentTransaction.commit();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("MainActivity", "============> onResume");
-//        if(logging){
-//            Log.e("MainActivity", "============> logging true");
-//            logging = false;
-//            setUserInfo();
-//        }
-        setUserInfo();
+//        setUserInfo();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == RESULT_OK) {
+                Log.e("MainActivity", "============> logging true -> RESULT_OK");
+                HomeFragment fragment = new HomeFragment();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame, fragment);
+                fragmentTransaction.commit();
+                setUserInfo();
+            }
+        }
     }
 
     public void setActionBarTitle(String title) {
@@ -259,22 +269,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
         if (id == R.id.btn_add_new) {
             if(!create_openned){
                 create_openned = true;
@@ -283,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.replace(R.id.frame, fragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
+//                checkAllRequirePermission();
             }
             return true;
         }
@@ -290,25 +293,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void checkAllRequirePermission(){
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.INTERNET}, PERMISSION_REQUIREMENT);
-        }
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CHANGE_WIFI_STATE}, PERMISSION_REQUIREMENT);
-        }
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUIREMENT);
-        }
-    }
+//    public void checkAllRequirePermission(){
+//        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.INTERNET}, PERMISSION_REQUIREMENT);
+//        } else if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CHANGE_WIFI_STATE}, PERMISSION_REQUIREMENT);
+//        } else if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUIREMENT);
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUIREMENT: {
-
-                break;
-            }
+        Log.e("MainActivity", "============> requestCode: "+requestCode);
+        if(requestCode == PERMISSION_REQUIREMENT && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Log.e("MainActivity", "============> PERMISSION_REQUIREMENT");
+            NOT_ALLOW_PERMISSION = false;
+        } else{
+            NOT_ALLOW_PERMISSION = true;
         }
     }
 
