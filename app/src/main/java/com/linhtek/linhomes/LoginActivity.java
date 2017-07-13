@@ -12,10 +12,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    ValueEventListener mListener;
+    DBHelper db;
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     boolean logged = false;
@@ -50,6 +65,55 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
+
+        db = new DBHelper(getBaseContext());
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("users");
+        mListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try{
+                    if(dataSnapshot.hasChildren()){
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                        Log.e("FCM", "response hasChildren ==========> "+map.toString());
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+//                            String key = entry.getKey();
+                            Object itemUser = entry.getValue();
+                            if(!itemUser.toString().isEmpty()){
+                                JSONObject user = new JSONObject(itemUser.toString());
+                                Log.e("FCM", "response user ==========> "+user.toString());
+                                if(user.has("name") && user.has("phone") && user.has("pw")){
+                                    Log.e("FCM", "response user has ==========> "+user.getString("phone"));
+                                    if(!db.checkExistUser(user.getString("phone"))){
+                                        Log.e("FCM", "response insertUser ==========> "+user.getString("phone"));
+                                        db.insertUser(user.getString("name"), user.getString("phone"), user.getString("pw"), 0);
+                                    }
+                                }
+                            }
+                        }
+//                        Map<String, Object> childUpdates = new HashMap<>();
+//                        childUpdates.put("name", name);
+//                        childUpdates.put("pw", pw);
+//                        childUpdates.put("phone", dataSnapshot.getKey());
+//                        myRef.updateChildren(childUpdates);
+//                        myRef.removeEventListener(mListener);
+//                        DBHelper db = new DBHelper(getBaseContext());
+//                        db.insertUser(name, ph, pw);
+//                        Log.e("FCM", "update database OK");
+                    }
+                    Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());
+                } catch (Exception e){
+                    Log.e("FCM err", e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("FCM err", "=============> Failed to read value.", error.toException());
+            }
+        };
+        myRef.addValueEventListener(mListener);
+
     }
 
     public void login() {

@@ -44,9 +44,10 @@
     <string name="password">Mật khẩu</string>
     <string name="re_password">Xác nhận mật khẩu</string>
     <string name="login">Đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
     <string name="no_acc_yet">Đăng ký tài khoản</string>
     <string name="required">Bắt buộc nhập</string>
-    <string name="already_acc">Đã có TK. Đăng nhập</string>
+    <string name="already_acc">Đã có. Quay lại Đăng nhập</string>
     <string name="create">Tạo</string>
     <string name="create_acc">Tạo tài khoản</string>
     <string name="re_pw_wrong">Xác nhận MK chưa đúng</string>

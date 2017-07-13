@@ -104,6 +104,7 @@ public class SignupActivity extends AppCompatActivity {
                         // create the acc
                         Map<String, Object> childUpdates = new HashMap<>();
                         childUpdates.put("name", name);
+                        childUpdates.put("pw", pw);
                         childUpdates.put("phone", dataSnapshot.getKey());
                         myRef.updateChildren(childUpdates);
                         myRef.removeEventListener(mListener);

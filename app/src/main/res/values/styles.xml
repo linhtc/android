@@ -28,6 +28,7 @@
         <item name="android:colorButtonNormal">@color/text_content</item>
         <item name="android:textColor">@color/text_title</item>
         <item name="android:textColorSecondary">@color/text_title</item>
+
     </style>
 
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">

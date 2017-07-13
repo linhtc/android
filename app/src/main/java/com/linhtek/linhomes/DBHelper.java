@@ -56,6 +56,17 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean insertUser (String name, String phone, String password, Integer status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("phone", phone);
+        contentValues.put("full_name", name);
+        contentValues.put("pw", password);
+        contentValues.put("sta", status);
+        db.insert("users", null, contentValues);
+        return true;
+    }
+
     public Cursor getUser(String phone, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "select * from users where phone = ? and pw = ? limit 1", new String[] { phone, password } );
@@ -68,6 +79,17 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("sta", status);
         db.update("users", contentValues, "phone = ? ", new String[] { phone } );
         return true;
+    }
+
+    public boolean checkExistUser(String phone) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from users where phone = ? limit 1", new String[] { phone } );
+        if(res.getCount() > 0){
+            res.close();
+            return true;
+        }
+        res.close();
+        return false;
     }
 
     public boolean insertDevice (String firebase, String ap_ssid, String ap_pw, String ap_ip, String device_name, Integer style) {
