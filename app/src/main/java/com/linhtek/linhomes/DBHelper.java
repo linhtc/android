@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "LinHomes.db";
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 4);
+        super(context, DATABASE_NAME , null, 5);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ")";
         db.execSQL(query);
         query = "create table users(" +
-            "phone text primary key, full_name text, pw text, sta INTEGER" +
+            "phone text primary key, full_name text, pw text, sta INTEGER, syn INTEGER" +
           ")";
         db.execSQL(query);
     }
@@ -52,6 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("full_name", name);
         contentValues.put("pw", password);
         contentValues.put("sta", 1);
+        contentValues.put("syn", 0);
         db.insert("users", null, contentValues);
         return true;
     }
@@ -63,6 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("full_name", name);
         contentValues.put("pw", password);
         contentValues.put("sta", status);
+        contentValues.put("syn", 0);
         db.insert("users", null, contentValues);
         return true;
     }
@@ -72,10 +74,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery( "select * from users where phone = ? and pw = ? limit 1", new String[] { phone, password } );
     }
 
-    public boolean updateUser (String phone, Integer status) {
+    public boolean updateUser (String phone, Integer status, Integer sync) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("sta", status);
+        contentValues.put("syn", sync);
         db.update("users", contentValues, "phone = ? ", new String[] { phone } );
         return true;
     }

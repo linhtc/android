@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
     ValueEventListener mListener;
     DBHelper db;
     boolean flagRm = false;
+    String phone;
 
     @Nullable
     @Override
@@ -71,41 +72,47 @@ public class HomeFragment extends Fragment {
         Cursor activeUser = db.getActiveUser();
         if(activeUser.getCount() > 0){
             if(activeUser.moveToFirst()){
-                String phone = activeUser.getString(activeUser.getColumnIndex("phone"));
-                database = FirebaseDatabase.getInstance();
-                myRef = database.getReference("users/"+phone+"/devices");
-                mListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        try{
-                            if(dataSnapshot.hasChildren()){
-                                for(DataSnapshot device : dataSnapshot.getChildren() ){
-                                    Log.e("FCM", "response device ==========> "+device.toString());
-                                    if(!db.checkExistDevice(device.getKey())){
-                                        flagRm = true;
-                                        Log.e("FCM", "response insertDevice ==========> "+device.getKey());
-                                        String cn = device.child("cn").getValue().toString();
-                                        String wi = device.child("wi").getValue().toString();
-                                        String ws = device.child("ws").getValue().toString();
-                                        Long sta = (Long) device.child("sta").getValue();
-                                        Long sty = (Long) device.child("sty").getValue();
-                                        db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                Integer sync = activeUser.getInt(activeUser.getColumnIndex("syn"));
+                if(sync < 1){
+                    phone = activeUser.getString(activeUser.getColumnIndex("phone"));
+                    database = FirebaseDatabase.getInstance();
+                    myRef = database.getReference("users/"+phone+"/devices");
+                    mListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            try{
+                                if(dataSnapshot.hasChildren()){
+                                    for(DataSnapshot device : dataSnapshot.getChildren() ){
+                                        Log.e("FCM", "response device ==========> "+device.toString());
+                                        if(!db.checkExistDevice(device.getKey())){
+                                            flagRm = true;
+                                            Log.e("FCM", "response insertDevice ==========> "+device.getKey());
+                                            String cn = device.child("cn").getValue().toString();
+                                            String wi = device.child("wi").getValue().toString();
+                                            String ws = device.child("ws").getValue().toString();
+                                            Long sta = (Long) device.child("sta").getValue();
+                                            Long sty = (Long) device.child("sty").getValue();
+                                            db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                                        }
+                                    }
+                                    myRef.removeEventListener(mListener);
+                                    if(flagRm){
+                                        db.updateUser(phone, 1, 1);
                                     }
                                 }
-                                myRef.removeEventListener(mListener);
+                                Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());
+                            } catch (Exception e){
+                                Log.e("FCM err", e.getMessage());
                             }
-                            Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());
-                        } catch (Exception e){
-                            Log.e("FCM err", e.getMessage());
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        Log.e("FCM err", "=============> Failed to read value.", error.toException());
-                    }
-                };
-                myRef.addValueEventListener(mListener);
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e("FCM err", "=============> Failed to read value.", error.toException());
+                        }
+                    };
+                    myRef.addValueEventListener(mListener);
+                }
             }
         }
         activeUser.close();

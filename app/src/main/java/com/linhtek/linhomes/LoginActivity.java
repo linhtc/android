@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         if(user.moveToFirst()){
             Log.e("LoginActivity", "============> moveToFirst true");
             logged = true;
-            db.updateUser(email, 1);
+            db.updateUser(email, 1, 0);
         }
         user.close();
 
