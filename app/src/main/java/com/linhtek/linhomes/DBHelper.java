@@ -131,6 +131,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean checkExistIdentifyDevice(String deviceID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "select * from devices where fcm=?", new String[] { deviceID } );
+        if(res.getCount() > 0){
+            return true;
+        }
+        return false;
+    }
+
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery( "select * from devices where id="+id+"", null );

@@ -47,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     public int PERMISSION_REQUIREMENT = 0;
-    private  boolean logging = false;
+    private boolean logging = false;
     public boolean create_openned = false;
     public boolean NOT_ALLOW_PERMISSION = false;
+    public String ACTIVE_PHONE_USER = "";
     private static final int REQUEST_SIGNUP = 0;
 
     @Override
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frame, fragment);
             fragmentTransaction.commit();
-//            checkAllRequirePermission();
+            setUserInfo();
         }
         activeUser.close();
         db.close();
@@ -214,7 +215,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("MainActivity", "============> requestCode: "+requestCode);
+        Log.e("MainActivity", "============> resultCode: "+resultCode);
+        Log.e("MainActivity", "============> RESULT_OK: "+RESULT_OK);
         if (requestCode == REQUEST_SIGNUP) {
+            Log.e("MainActivity", "============> REQUEST_SIGNUP");
             if (resultCode == RESULT_OK) {
                 Log.e("MainActivity", "============> logging true -> RESULT_OK");
                 HomeFragment fragment = new HomeFragment();
@@ -261,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 tvName.setText(name);
                 TextView tvEmail = (TextView) headerView.findViewById(R.id.email);
                 tvEmail.setText(phone);
+                ACTIVE_PHONE_USER = phone;
             }
         }
         activeUser.close();

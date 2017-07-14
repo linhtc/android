@@ -75,6 +75,7 @@ public class HomeFragment extends Fragment {
                 Integer sync = activeUser.getInt(activeUser.getColumnIndex("syn"));
                 if(sync < 1){
                     phone = activeUser.getString(activeUser.getColumnIndex("phone"));
+                    ((MainActivity) getActivity()).ACTIVE_PHONE_USER = phone;
                     database = FirebaseDatabase.getInstance();
                     myRef = database.getReference("users/"+phone+"/devices");
                     mListener = new ValueEventListener() {
@@ -84,7 +85,7 @@ public class HomeFragment extends Fragment {
                                 if(dataSnapshot.hasChildren()){
                                     for(DataSnapshot device : dataSnapshot.getChildren() ){
                                         Log.e("FCM", "response device ==========> "+device.toString());
-                                        if(!db.checkExistDevice(device.getKey())){
+                                        if(!db.checkExistIdentifyDevice(device.getKey())){
                                             flagRm = true;
                                             Log.e("FCM", "response insertDevice ==========> "+device.getKey());
                                             String cn = device.child("cn").getValue().toString();

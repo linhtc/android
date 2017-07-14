@@ -168,6 +168,10 @@ public class DeviceFragment extends Fragment {
                         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                         Log.e(TAG, "=============> FCM response: " + map.toString());
                         if(!map.get("wi").toString().isEmpty() && !map.get("wi").toString().equalsIgnoreCase(deviceIP)){
+                            // add device for active user
+                            if(deviceIP.isEmpty()){
+                                updateAccountDevice(map.get("wi").toString());
+                            }
                             Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
                             deviceIP = map.get("wi").toString();
                             db.updateDevice(deviceName, deviceIP);
@@ -189,6 +193,20 @@ public class DeviceFragment extends Fragment {
         tvState.setText(state == 1 ? getResources().getString(R.string.on) : getResources().getString(R.string.off));
         addListenerOnButton(v);
         return v;
+    }
+
+    public void updateAccountDevice(String wi){
+        String phone = ((MainActivity) getActivity()).ACTIVE_PHONE_USER;
+        Log.e(TAG, "=============> updateAccountDevice: " + phone+"->"+deviceID);
+        DatabaseReference ref = database.getReference("users/"+phone+"/devices/"+deviceID);
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("wi", wi);
+        childUpdates.put("ws", deviceSSID);
+        childUpdates.put("cn", customName);
+        childUpdates.put("sta", state);
+        childUpdates.put("sty", style);
+        childUpdates.put("phone", phone);
+        ref.updateChildren(childUpdates);
     }
 
     public void addListenerOnButton(View v) {

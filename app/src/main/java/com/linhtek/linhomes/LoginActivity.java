@@ -62,8 +62,8 @@ public class LoginActivity extends AppCompatActivity {
                 // Start the Signup activity
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
                 startActivityForResult(intent, REQUEST_SIGNUP);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//                finish();
+//                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
 
@@ -155,9 +155,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("LoginActivity", "============> requestCode: "+requestCode);
+        Log.e("LoginActivity", "============> resultCode: "+resultCode);
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
                 setResult(RESULT_OK, null);
+                Log.e("LoginActivity", "============> REQUEST_SIGNUP ok");
                 this.finish();
             }
         }

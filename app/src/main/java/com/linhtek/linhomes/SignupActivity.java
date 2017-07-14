@@ -64,10 +64,10 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+//                startActivity(intent);
                 finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
     }
@@ -161,14 +161,16 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupSuccess() {
+        Log.e("FCM", "onSignupSuccess");
         _signupButton.setEnabled(true);
+        Log.e("onSignupSuccess", "============> RESULT_OK: "+RESULT_OK);
         setResult(RESULT_OK, null);
         finish();
     }
 
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
+        Log.e("FCM", "onSignupFailed");
         _signupButton.setEnabled(true);
     }
 
