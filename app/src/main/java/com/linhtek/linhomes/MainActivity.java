@@ -222,11 +222,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity", "============> REQUEST_SIGNUP");
             if (resultCode == RESULT_OK) {
                 Log.e("MainActivity", "============> logging true -> RESULT_OK");
+                setUserInfo();
                 HomeFragment fragment = new HomeFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frame, fragment);
                 fragmentTransaction.commit();
-                setUserInfo();
             }
         }
     }

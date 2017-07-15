@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
     boolean logged = false;
+    boolean respondent = false;
+    ProgressDialog progressDialog;
 
     @Bind(R.id.input_user) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
@@ -112,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login() {
         Log.e(TAG, "Login");
-
+        respondent = false;
         if (!validate()) {
             onLoginFailed();
             return;
@@ -121,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         logged = false;
         _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
+        progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
@@ -141,17 +144,15 @@ public class LoginActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
+                        progressDialog.dismiss();
                         if(logged){
                             onLoginSuccess();
                         } else{
                              onLoginFailed();
                         }
-                        progressDialog.dismiss();
                     }
                 }, 3000);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -187,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
+//        String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         if (password.isEmpty()) {

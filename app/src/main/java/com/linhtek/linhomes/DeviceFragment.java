@@ -162,20 +162,22 @@ public class DeviceFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try{
-                        if(dialogLoading.isShowing()){
-                            dialogLoading.dismiss();
-                        }
-                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                        Log.e(TAG, "=============> FCM response: " + map.toString());
-                        if(!map.get("wi").toString().isEmpty() && !map.get("wi").toString().equalsIgnoreCase(deviceIP)){
-                            // add device for active user
-                            if(deviceIP.isEmpty()){
-                                updateAccountDevice(map.get("wi").toString());
+                        if(dataSnapshot.hasChildren()){
+                            if(dialogLoading.isShowing()){
+                                dialogLoading.dismiss();
                             }
-                            Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
-                            deviceIP = map.get("wi").toString();
-                            db.updateDevice(deviceName, deviceIP);
-                            connectWebSocket();
+                            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                            Log.e(TAG, "=============> FCM response: " + map.toString());
+                            if(!map.get("wi").toString().isEmpty() && !map.get("wi").toString().equalsIgnoreCase(deviceIP)){
+                                // add device for active user
+                                if(deviceIP.isEmpty()){
+                                    updateAccountDevice(map.get("wi").toString());
+                                }
+                                Log.e(TAG, "=============> update :"+ deviceName+": "+map.get("wi").toString());
+                                deviceIP = map.get("wi").toString();
+                                db.updateDevice(deviceName, deviceIP);
+                                connectWebSocket();
+                            }
                         }
                     } catch (Exception e){
                         Log.e("FCM err", e.getMessage());
@@ -205,7 +207,7 @@ public class DeviceFragment extends Fragment {
         childUpdates.put("cn", customName);
         childUpdates.put("sta", state);
         childUpdates.put("sty", style);
-        childUpdates.put("phone", phone);
+//        childUpdates.put("phone", phone);
         ref.updateChildren(childUpdates);
     }
 
@@ -426,10 +428,6 @@ public class DeviceFragment extends Fragment {
             public void onClose(int i, String s, boolean b) {
                 Log.e("Websocket", "Closed ==> " + s);
                 flagWSconnected = false;
-                if(flagReconnect){
-//                    Log.e("Websocket", "reconnect to ws");
-//                    mWebSocketClient.connect();
-                }
             }
 
             @Override

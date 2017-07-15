@@ -101,7 +101,6 @@ public class SignupActivity extends AppCompatActivity {
                         String name = _nameText.getText().toString();
                         String ph = _mobileText.getText().toString();
                         String pw = _passwordText.getText().toString();
-                        // create the acc
                         Map<String, Object> childUpdates = new HashMap<>();
                         childUpdates.put("name", name);
                         childUpdates.put("pw", pw);
@@ -111,8 +110,13 @@ public class SignupActivity extends AppCompatActivity {
                         DBHelper db = new DBHelper(getBaseContext());
                         db.insertUser(name, ph, pw);
                         Log.e("FCM", "update database OK");
+                    } else{
+                        respondent = true;
                     }
+                    Log.e("FCM", "created ==========> "+created);
+                    Log.e("FCM", "respondent ==========> "+respondent);
                     Log.e("FCM", "response ==========> "+dataSnapshot.getValue().toString());
+                    myRef.removeEventListener(mListener);
                 } catch (Exception e){
                     Log.e("FCM err", e.getMessage());
                 }
@@ -124,19 +128,6 @@ public class SignupActivity extends AppCompatActivity {
             }
         };
         myRef.addValueEventListener(mListener);
-//        new android.os.Handler().postDelayed(
-//                new Runnable() {
-//                    public void run() {
-//                        // On complete call either onSignupSuccess or onSignupFailed
-//                        // depending on success
-//                        progressDialog.dismiss();
-//                        if(created){
-//                            onSignupSuccess();
-//                        } else{
-//                             onSignupFailed();
-//                        }
-//                    }
-//                }, 3000);
         getRegisterResult();
     }
 
@@ -156,7 +147,7 @@ public class SignupActivity extends AppCompatActivity {
                     getRegisterResult();
                 }
             }
-        }, 3000);
+        }, 1000);
         return true;
     }
 
@@ -169,7 +160,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Register failed", Toast.LENGTH_LONG).show();
         Log.e("FCM", "onSignupFailed");
         _signupButton.setEnabled(true);
     }

@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by Admin on 04-06-2015.
  */
-public class ScanFragment extends Fragment implements View.OnClickListener {
+public class ScanFragment extends Fragment {
 
     ProgressDialog dialogLoading;
     WifiManager wifi;
@@ -66,27 +66,16 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         v.setFocusableInTouchMode(true);
         v.requestFocus();
 
-        checkAllRequirePermission();
-
         DBHelper mydb;
         mydb = new DBHelper(getActivity().getBaseContext());
         ArrayList devices = mydb.getAllDevices(1);
         Log.e("Websocket", "============> devices: "+devices.toString());
 
         dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
-//        dialogLoading.setMessage(getResources().getString(R.string.scanning));
-//        if(!dialogLoading.isShowing()){
-//            dialogLoading.show();
-//        }
+        dialogLoading.setCanceledOnTouchOutside(false);
 
         listView = (ListView) v.findViewById(R.id.device_list);
-        if(devices.size() > 0){
-//            ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(), R. layout.activity_listview, devices);
-//            listView.setAdapter(adapter);
-        }
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 String ssid = (String)parent.getItemAtPosition(position);
@@ -96,7 +85,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                     if(!dialogLoading.isShowing()){
                         dialogLoading.show();
                     }
-
                     boolean connected = ConnectToNetworkWPA(ssid, "11330232");
                     if(connected){
                         try{
@@ -104,9 +92,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                             finalSSID = ssid;
                             times = 0;
                             checkActiveWifi();
-//                            if(wifiReciever != null){
-//                                getActivity().unregisterReceiver(wifiReciever);
-//                            }
                         } catch (Exception exx2){
                             Log.e(TAG, "===================> Wifi exx2: "+exx2.getMessage());
                         }
@@ -132,9 +117,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             openGPS = true;
             buildAlertMessageNoGps();
+            checkAllRequirePermission(false);
         } else{
             try{
                 Log.e("DEBUG", "==> scan");
+                checkAllRequirePermission(true);
                 dialogLoading.setMessage(getResources().getString(R.string.scanning));
                 if(!dialogLoading.isShowing()){
                     dialogLoading.show();
@@ -152,39 +139,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                 Log.e(TAG, "===================> add new e: "+e.getMessage());
             }
         }
-
         return v;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.btnAddNew:
-                locationManager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
-                if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                    openGPS = true;
-                    buildAlertMessageNoGps();
-                } else{
-                    try{
-                        dialogLoading.setMessage(getResources().getString(R.string.scanning));
-                        if(!dialogLoading.isShowing()){
-                            dialogLoading.show();
-                        }
-                        wifi = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                        if (!wifi.isWifiEnabled()){
-                            Toast.makeText(getActivity(), "Đã bật WiFi", Toast.LENGTH_LONG).show();
-                            wifi.setWifiEnabled(true);
-                        }
-                        flagScan = true;
-                        wifiReciever = new WifiScanReceiver();
-                        getActivity().registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-                        wifi.startScan();
-                    } catch (Exception e){
-                        Log.e(TAG, "===================> add new e: "+e.getMessage());
-                    }
-                }
-                break;
-        }
     }
 
     @Override
@@ -279,7 +234,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
-                                checkAllRequirePermission();
+                                checkAllRequirePermission(true);
                                 dialogLoading.setMessage(getResources().getString(R.string.scanning));
                                 if(!dialogLoading.isShowing()){
                                     dialogLoading.show();
@@ -320,11 +275,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                         Log.e(TAG, "===================> "+ exx.getMessage());
                     }
                 }
-
-//            if(flagScan){
-//                showScanningDevices();
-//            }
-//            dialogLoading.dismiss();
                 showScanningDevices();
             }
         }
@@ -334,9 +284,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         try {
             WifiConfiguration conf = new WifiConfiguration();
             conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
-
             conf.preSharedKey = "\"" + password + "\"";
-
             conf.status = WifiConfiguration.Status.ENABLED;
             conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
             conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
@@ -345,12 +293,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
             conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
 
             Log.e("connecting", conf.SSID + " " + conf.preSharedKey);
-
             wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifiManager.addNetwork(conf);
-
             Log.e("after connecting", conf.SSID + " " + conf.preSharedKey);
-
             List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
             for( WifiConfiguration i : list ) {
                 if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
@@ -358,13 +303,10 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                     wifiManager.enableNetwork(i.networkId, true);
                     wifiManager.reconnect();
                     Log.e("reconnecting", i.SSID + " " + conf.preSharedKey);
-
                     break;
                 }
             }
             Log.e(TAG, "===================> Wifi dsaexx2: ");
-
-            //WiFi Connection success, return true
             return true;
         } catch (Exception ex) {
             Log.e(TAG, "===================> ConnectToNetworkWPA: "+ex.getMessage());
@@ -410,7 +352,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
                 } else {
                     Log.e(TAG, "===================> Waiting network: "+times);
                     if(times < 10){
-//                        ConnectToNetworkWPA(finalSSID, "11330232");
+                        if(!finalSSID.isEmpty()){
+                            ConnectToNetworkWPA(finalSSID, "11330232");
+                        }
                         checkActiveWifi();
                     } else{
                         dialogLoading.dismiss();
@@ -447,16 +391,22 @@ public class ScanFragment extends Fragment implements View.OnClickListener {
         alert.show();
     }
 
-    public void checkAllRequirePermission(){
+    public void checkAllRequirePermission(boolean flag){
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.INTERNET}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            if(flag){
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.INTERNET}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            }
         } else if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
             ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CHANGE_WIFI_STATE}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            if(flag){
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CHANGE_WIFI_STATE}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            }
         } else if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ((MainActivity) getActivity()).NOT_ALLOW_PERMISSION = true;
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            if(flag){
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, ((MainActivity) getActivity()).PERMISSION_REQUIREMENT);
+            }
         }
     }
 
