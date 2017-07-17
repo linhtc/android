@@ -91,6 +91,7 @@ public class DeviceFragment extends Fragment {
 
 //        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
         dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        dialogLoading.setCanceledOnTouchOutside(false);
         dialogLoading.setMessage(getResources().getString(R.string.connecting));
         dialogLoading.show();
 

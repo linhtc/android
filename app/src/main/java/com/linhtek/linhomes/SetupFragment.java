@@ -116,7 +116,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             checkActiveWifi();
 
             deviceName = device.getString(device.getColumnIndex("device_name"));
-            String optionName = device.getString(device.getColumnIndex("custom_name"));
+//            String optionName = device.getString(device.getColumnIndex("custom_name"));
             deviceSSID = device.getString(device.getColumnIndex("ws"));
             devicePw = device.getString(device.getColumnIndex("wp"));
             customName = (EditText)v.findViewById(R.id.custom_name);
@@ -138,12 +138,14 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         }
         inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
         if(scannedWifi.size() > 0){
+            Log.e(TAG, "scannedWifi ------------------->"+scannedWifi.toString());
 //            dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
 //            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
             dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
             inputSSID.setAdapter(dataAdapter);
         } else{
+            Log.e(TAG, "WifiScanReceiver ------------------->");
             wifiReciever = new WifiScanReceiver();
             getActivity().registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
             wifiManager.startScan();
