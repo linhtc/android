@@ -225,7 +225,11 @@ public class ScanFragment extends Fragment {
 
     private class WifiScanReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {
-            if(((MainActivity) getActivity()).NOT_ALLOW_PERMISSION){
+            if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                Log.e(TAG, "===================> buildAlertMessageNoGps");
+                openGPS = true;
+                buildAlertMessageNoGps();
+            } else if(((MainActivity) getActivity()).NOT_ALLOW_PERMISSION){
                 if(dialogLoading.isShowing()){
                     dialogLoading.dismiss();
                 }

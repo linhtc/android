@@ -15,14 +15,14 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileSnapshots.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/3.3/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/drawable/cctv64.png" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/cctv64.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DeviceFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DeviceFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SignupActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SignupActivity.java" />
     </list>
     <ignored path="Linhomes.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,14 +64,48 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DeviceFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DeviceFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DeviceFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="240" column="34" selection-start-line="240" selection-start-column="34" selection-end-line="240" selection-end-column="34" />
+            <state relative-caret-position="306">
+              <caret line="383" column="21" selection-start-line="383" selection-start-column="21" selection-end-line="383" selection-end-column="21" />
               <folding>
                 <element signature="docComment;class#DeviceFragment#0" expanded="false" />
-                <element signature="e#8133#8170#0" expanded="true" />
+                <element signature="e#2683#2692#0" expanded="false" />
+                <element signature="method#onCreateView#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="class#6412:8031" expanded="false" />
+                <element signature="method#onDataChange#0;class#6412:8031" expanded="false" />
+                <element signature="method#onCancelled#0;class#6412:8031" expanded="false" />
+                <element signature="method#updateAccountDevice#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="method#addListenerOnButton#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="class#13165:15022" expanded="false" />
+                <element signature="method#onTouch#0;class#13165:15022" expanded="false" />
+                <element signature="e#14032#14101#0" expanded="false" />
+                <element signature="method#onResume#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="method#onPause#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="method#onStop#0;class#DeviceFragment#0" expanded="false" />
+                <element signature="class#17634:20004" expanded="false" />
+                <element signature="method#onOpen#0;class#17634:20004" expanded="false" />
+                <element signature="method#onMessage#0;class#17634:20004" expanded="false" />
+                <element signature="method#onClose#0;class#17634:20004" expanded="false" />
+                <element signature="method#onError#0;class#17634:20004" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ScanFragment.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="231" column="19" selection-start-line="231" selection-start-column="19" selection-end-line="231" selection-end-column="19" />
+              <folding>
+                <element signature="docComment;class#ScanFragment#0" expanded="false" />
+                <element signature="e#1771#1780#0" expanded="false" />
+                <element signature="e#4938#4981#0" expanded="true" />
+                <element signature="method#onResume#0;class#ScanFragment#0" expanded="false" />
+                <element signature="method#onStop#0;class#ScanFragment#0" expanded="false" />
+                <element signature="method#showScanningDevices#0;class#ScanFragment#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -80,13 +114,39 @@
       <file leaf-file-name="SetupFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="139" column="14" selection-start-line="139" selection-start-column="14" selection-end-line="139" selection-end-column="14" />
+            <state relative-caret-position="452">
+              <caret line="412" column="41" selection-start-line="412" selection-start-column="41" selection-end-line="412" selection-end-column="41" />
               <folding>
-                <element signature="e#3009#3054#0" expanded="true" />
-                <element signature="e#7392#7437#0" expanded="true" />
+                <element signature="docComment;class#SetupFragment#0" expanded="false" />
+                <element signature="e#3175#3220#0" expanded="true" />
+                <element signature="method#onResume#0;class#SetupFragment#0" expanded="false" />
+                <element signature="method#onStop#0;class#SetupFragment#0" expanded="false" />
+                <element signature="class#WifiScanReceiver#0;class#SetupFragment#0" expanded="false" />
+                <element signature="method#checkActiveWifi#0;class#SetupFragment#0" expanded="false" />
+                <element signature="method#onOpen#0;class#15360:22383" expanded="false" />
+                <element signature="method#buildAlertMessageNoGps#0;class#SetupFragment#0" expanded="false" />
+                <element signature="e#22678#23009#0" expanded="true" />
+                <element signature="e#22758#22785#0" expanded="true" />
+                <element signature="e#22816#22843#0" expanded="true" />
+                <element signature="e#23008#23009#0" expanded="true" />
+                <element signature="e#23052#23286#0" expanded="true" />
+                <element signature="e#23162#23189#0" expanded="true" />
+                <element signature="e#23285#23286#0" expanded="true" />
               </folding>
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="custom_spinner.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/custom_spinner.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2">
+            <state />
           </provider>
         </entry>
       </file>
@@ -2066,7 +2126,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/bg_active.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/setup_fragment2.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/setup_fragment.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/custom_spinner.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/primary_color.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/second_color.xml" />
@@ -2076,14 +2135,15 @@
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/CookerFragment.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DBHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/HomeFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/LoginActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SignupActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DBHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DeviceFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/custom_spinner.xml" />
       </list>
     </option>
   </component>
@@ -2119,8 +2179,28 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Linhomes" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Linhomes" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -2227,37 +2307,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="values" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Linhomes" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Linhomes" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable" />
+              <option name="myItemId" value="layout" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -2307,26 +2357,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Linhomes" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Linhomes" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -2696,18 +2726,19 @@
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.66774195" sideWeight="0.49806523" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24647415" sideWeight="0.5053333" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.95066667" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39733332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32946378" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6698925" sideWeight="0.50193477" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24647415" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24647415" sideWeight="0.49466667" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -2721,7 +2752,6 @@
       <window_info id="Assistant" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32946378" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32946378" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -2745,7 +2775,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="10" />
+      <option name="time" value="13" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -2938,7 +2968,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/custom_spinner.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/tool_bar.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -3062,42 +3091,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-840">
-          <caret line="144" column="42" selection-start-line="144" selection-start-column="42" selection-end-line="144" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/LoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-210">
           <caret line="30" column="26" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="26" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="119" column="45" selection-start-line="119" selection-start-column="45" selection-end-line="119" selection-end-column="45" />
-          <folding>
-            <element signature="docComment;class#ScanFragment#0" expanded="false" />
-            <element signature="e#1771#1780#0" expanded="false" />
-            <element signature="e#2503#3871#0" expanded="true" />
-            <element signature="e#2894#2942#0" expanded="true" />
-            <element signature="e#3870#3871#0" expanded="true" />
-            <element signature="e#4938#4981#0" expanded="true" />
-            <element signature="e#6402#6445#0" expanded="true" />
-            <element signature="method#onStop#0;class#ScanFragment#0" expanded="false" />
-            <element signature="e#9741#10804#0" expanded="true" />
-            <element signature="e#10035#10078#0" expanded="true" />
-            <element signature="e#10360#10739#0" expanded="true" />
-            <element signature="e#10738#10739#0" expanded="true" />
-            <element signature="e#10803#10804#0" expanded="true" />
-            <element signature="method#buildAlertMessageNoGps#0;class#ScanFragment#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3128,26 +3126,90 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DBHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="139" column="14" selection-start-line="139" selection-start-column="14" selection-end-line="139" selection-end-column="14" />
-          <folding>
-            <element signature="e#3009#3054#0" expanded="true" />
-            <element signature="e#7392#7437#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="240">
+          <caret line="25" column="60" selection-start-line="25" selection-start-column="60" selection-end-line="25" selection-end-column="60" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/DeviceFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="240" column="34" selection-start-line="240" selection-start-column="34" selection-end-line="240" selection-end-column="34" />
+        <state relative-caret-position="306">
+          <caret line="383" column="21" selection-start-line="383" selection-start-column="21" selection-end-line="383" selection-end-column="21" />
           <folding>
             <element signature="docComment;class#DeviceFragment#0" expanded="false" />
-            <element signature="e#8133#8170#0" expanded="true" />
+            <element signature="e#2683#2692#0" expanded="false" />
+            <element signature="method#onCreateView#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="class#6412:8031" expanded="false" />
+            <element signature="method#onDataChange#0;class#6412:8031" expanded="false" />
+            <element signature="method#onCancelled#0;class#6412:8031" expanded="false" />
+            <element signature="method#updateAccountDevice#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="method#addListenerOnButton#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="class#13165:15022" expanded="false" />
+            <element signature="method#onTouch#0;class#13165:15022" expanded="false" />
+            <element signature="e#14032#14101#0" expanded="false" />
+            <element signature="method#onResume#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="method#onPause#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="method#onStop#0;class#DeviceFragment#0" expanded="false" />
+            <element signature="class#17634:20004" expanded="false" />
+            <element signature="method#onOpen#0;class#17634:20004" expanded="false" />
+            <element signature="method#onMessage#0;class#17634:20004" expanded="false" />
+            <element signature="method#onClose#0;class#17634:20004" expanded="false" />
+            <element signature="method#onError#0;class#17634:20004" expanded="false" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/ScanFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="231" column="19" selection-start-line="231" selection-start-column="19" selection-end-line="231" selection-end-column="19" />
+          <folding>
+            <element signature="docComment;class#ScanFragment#0" expanded="false" />
+            <element signature="e#1771#1780#0" expanded="false" />
+            <element signature="e#4938#4981#0" expanded="true" />
+            <element signature="method#onResume#0;class#ScanFragment#0" expanded="false" />
+            <element signature="method#onStop#0;class#ScanFragment#0" expanded="false" />
+            <element signature="method#showScanningDevices#0;class#ScanFragment#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/linhtek/linhomes/SetupFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="452">
+          <caret line="412" column="41" selection-start-line="412" selection-start-column="41" selection-end-line="412" selection-end-column="41" />
+          <folding>
+            <element signature="docComment;class#SetupFragment#0" expanded="false" />
+            <element signature="e#3175#3220#0" expanded="true" />
+            <element signature="method#onResume#0;class#SetupFragment#0" expanded="false" />
+            <element signature="method#onStop#0;class#SetupFragment#0" expanded="false" />
+            <element signature="class#WifiScanReceiver#0;class#SetupFragment#0" expanded="false" />
+            <element signature="method#checkActiveWifi#0;class#SetupFragment#0" expanded="false" />
+            <element signature="method#onOpen#0;class#15360:22383" expanded="false" />
+            <element signature="method#buildAlertMessageNoGps#0;class#SetupFragment#0" expanded="false" />
+            <element signature="e#22678#23009#0" expanded="true" />
+            <element signature="e#22758#22785#0" expanded="true" />
+            <element signature="e#22816#22843#0" expanded="true" />
+            <element signature="e#23008#23009#0" expanded="true" />
+            <element signature="e#23052#23286#0" expanded="true" />
+            <element signature="e#23162#23189#0" expanded="true" />
+            <element signature="e#23285#23286#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/custom_spinner.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
   </component>

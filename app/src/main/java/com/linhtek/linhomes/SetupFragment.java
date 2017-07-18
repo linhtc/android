@@ -71,6 +71,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     WifiScanReceiver wifiReciever;
     String deviceName;
     String optionName;
+    String deviceID;
     String deviceIP;
     String deviceSSID;
     String devicePw;
@@ -82,9 +83,12 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     int times = 0;
     int state = 0;
     int style = 0; // loai thiet bi, 1 la switch
+    LocationManager locationManager;
     boolean startConnect = false;
     boolean flag_apply = false;
     DBHelper db;
+    boolean openGPS = false;
+    AlertDialog alert;
 
     @Nullable
     @Override
@@ -95,6 +99,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         v.requestFocus();
 
         dialogLoading = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        dialogLoading.setCanceledOnTouchOutside(false);
         dialogLoading.setMessage(getResources().getString(R.string.connecting));
         dialogLoading.show();
 //        dialogLoading = ProgressDialog.show(getActivity(), "", getResources().getString(R.string.connecting), true);
@@ -106,13 +111,18 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             reactiveWifi = bundle.getString("reactive_wifi");
             scannedWifi = bundle.getStringArrayList("scanned_list");
         }
+        if(reactiveWifi == null){
+            reactiveWifi = "";
+        }
 
         db = new DBHelper(getActivity());
         Cursor device = db.getDevice(style, optionName);
         if(device.moveToFirst()){
             state = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
+            deviceID = device.getString(device.getColumnIndex("fcm"));
             deviceIP = device.getString(device.getColumnIndex("wi"));
+
             checkActiveWifi();
 
             deviceName = device.getString(device.getColumnIndex("device_name"));
@@ -120,12 +130,11 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             deviceSSID = device.getString(device.getColumnIndex("ws"));
             devicePw = device.getString(device.getColumnIndex("wp"));
             customName = (EditText)v.findViewById(R.id.custom_name);
-//            customName.setHint(getResources().getString(R.string.device_name)+ ": "+(optionName.isEmpty() ? deviceName : optionName));
-//            customSSID = (EditText)v.findViewById(R.id.custom_ssid);
-//            inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
-//            customSSID.setHint(getResources().getString(R.string.device_ssid)+ ": "+deviceSSID);
             customPw = (EditText)v.findViewById(R.id.custom_pw);
 //            customPw.setHint(getResources().getString(R.string.device_pw)+ ": "+devicePw);
+        }
+        if(deviceID == null){
+            deviceID = "";
         }
 
         ((MainActivity) getActivity()).setActionBarTitle("SETUP DEVICES");
@@ -139,12 +148,15 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
         inputSSID = (Spinner) v.findViewById(R.id.input_ssid);
         if(scannedWifi.size() > 0){
             Log.e(TAG, "scannedWifi ------------------->"+scannedWifi.toString());
-//            dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
-//            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
             dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
             inputSSID.setAdapter(dataAdapter);
         } else{
+            locationManager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
+            if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                openGPS = true;
+                buildAlertMessageNoGps();
+            }
             Log.e(TAG, "WifiScanReceiver ------------------->");
             wifiReciever = new WifiScanReceiver();
             getActivity().registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -162,9 +174,6 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                     if(!customName.getText().toString().isEmpty()){
                         optionName = customName.getText().toString();
                     }
-//                    if(!customSSID.getText().toString().isEmpty()){
-//                        deviceSSID = customSSID.getText().toString();
-//                    }
                     if(!inputSSID.getSelectedItem().toString().isEmpty()){
                         deviceSSID = inputSSID.getSelectedItem().toString();
                     }
@@ -210,6 +219,29 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onResume() {
+        if(alert != null){
+            alert.hide();
+        }
+        if(openGPS){
+            Log.e("DEBUG", "onResume of SwitchFragment openGPS");
+            locationManager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
+            if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                openGPS = true;
+                buildAlertMessageNoGps();
+            } else{
+                try{
+                    openGPS = false;
+                    wifiManager.startScan();
+                } catch (Exception e){
+                    Log.e(TAG, "===================> add new e: "+e.getMessage());
+                }
+            }
+        }
+        super.onResume();
+    }
+
+    @Override
     public void onStop() {
         Log.e("DEBUG", "closing socket...");
         try{
@@ -223,7 +255,12 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
 
     private class WifiScanReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {
-            Log.e(TAG, "===================> Wifi scan receive: ");
+            if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                Log.e(TAG, "===================> buildAlertMessageNoGps");
+                openGPS = true;
+                buildAlertMessageNoGps();
+            }
+            Log.e(TAG, "===================> WifiScanReceiver");
             List<ScanResult> wifiScanList = wifiManager.getScanResults();
             Log.e(TAG, "===================> "+ wifiScanList.size());
             scannedWifi  = new ArrayList<String>();
@@ -235,17 +272,20 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                             scannedWifi.add(ssid);
                         }
                     }
-                    if(scannedWifi.size() > 0){
-//                        dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, scannedWifi);
-//                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
-                        dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
-                        inputSSID.setAdapter(dataAdapter);
-//                        getActivity().unregisterReceiver(wifiReciever);
-                    }
                 } catch (Exception exx){
                     Log.e(TAG, "===================> "+ exx.getMessage());
+                    wifiManager.startScan();
+                    Log.e(TAG, "===================> startScan");
                 }
+            }
+            if(scannedWifi.size() > 0){
+                dataAdapter = new ArrayAdapter<String>(getActivity(), R.layout.custom_spinner, scannedWifi);
+                dataAdapter.setDropDownViewResource(R.layout.custom_spinner);
+                inputSSID.setAdapter(dataAdapter);
+//                        getActivity().unregisterReceiver(wifiReciever);
+            } else{
+                wifiManager.startScan();
+                Log.e(TAG, "===================> else startScan");
             }
         }
     }
@@ -297,13 +337,20 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     private void connectWebSocket() {
         URI uri;
         try {
+            String path = "";
+            if(style == 1){
+                path = "Switch-";
+            }
+            path+=deviceID;
+            Log.e(TAG, "===================> path: "+ path);
+            Log.e(TAG, "===================> getSSID: "+ wifiManager.getConnectionInfo().getSSID());
             String urip;
-            if(deviceIP.isEmpty()){
+            if(deviceIP.isEmpty() || wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+path+"\"")){
                 urip = "ws://192.168.4.1:9998";
             } else{
                 urip = "ws://"+deviceIP+":9998";
             }
-            Log.e(TAG, "====================>"+urip);
+            Log.e(TAG, "====================> connectWebSocket url: "+urip);
             uri = new URI(urip);
         } catch (Exception e) {
             Log.e("Websocket", "============> URI err: " + e.getMessage());
@@ -342,8 +389,8 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
                         Log.e("Websocket", "req ack: "+req.toString());
                         mWebSocketClient.send(req.toString());
                     }
+                    dialogLoading.dismiss();
                     if(state == 1){
-                        dialogLoading.dismiss();
                         if(res.getInt("status") == 1){
                             if(flag_apply){
                                 switch (style){
@@ -394,6 +441,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             public void onClose(int i, String s, boolean b) {
                 Log.e("Websocket", "Closed " + s);
                 Log.e("Websocket", "back to SwitchFragment " + s);
+                dialogLoading.dismiss();
                 if(flag_apply){
                     switch (style){
                         case 1:{ // switch
@@ -428,6 +476,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onError(Exception e) {
                 Log.e("Websocket", "Error " + e.getMessage());
+                dialogLoading.dismiss();
                 if(deviceIP.isEmpty()){
 //                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.device_never_connected), Toast.LENGTH_LONG).show();
                 } else{
@@ -436,6 +485,24 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             }
         };
         mWebSocketClient.connect();
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Hãy bật GPS")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

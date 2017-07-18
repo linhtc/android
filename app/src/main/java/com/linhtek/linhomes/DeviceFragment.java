@@ -260,7 +260,7 @@ public class DeviceFragment extends Fragment {
                             myRef.updateChildren(childUpdates);
                         } else{
                             flagConnected = false;
-                            if (wifiManager.isWifiEnabled() == false){
+                            if (!wifiManager.isWifiEnabled()){
                                 Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.turn_on_wifi), Toast.LENGTH_LONG).show();
                                 wifiManager.setWifiEnabled(true);
                             } else{
@@ -372,18 +372,40 @@ public class DeviceFragment extends Fragment {
     }
 
     private void connectWebSocket() {
-        if(deviceIP.isEmpty()){
-            Log.e("Websocket", "deviceIP is empty");
-            return;
-        }
+//        if(deviceIP.isEmpty()){
+//            Log.e("Websocket", "deviceIP is empty");
+//            return;
+//        }
+//        URI uri;
+//        try {
+//            uri = new URI("ws://"+deviceIP+":9998");
+//        } catch (Exception e) {
+//            Log.e("Websocket", "============> URI err: " + e.getMessage());
+//            return;
+//        }
+//        Log.e("Websocket", "come on come on ===> ...");
         URI uri;
         try {
-            uri = new URI("ws://"+deviceIP+":9998");
+            String path = "";
+            if(style == 1){
+                path = "Switch-";
+            }
+            path+=deviceID;
+            Log.e(TAG, "===================> path: "+ path);
+            Log.e(TAG, "===================> getSSID: "+ wifiManager.getConnectionInfo().getSSID());
+            String urip;
+            if(deviceIP.isEmpty() || wifiManager.getConnectionInfo().getSSID().equalsIgnoreCase("\""+path+"\"")){
+                urip = "ws://192.168.4.1:9998";
+            } else{
+                urip = "ws://"+deviceIP+":9998";
+            }
+            Log.e(TAG, "====================> connectWebSocket url: "+urip);
+            uri = new URI(urip);
         } catch (Exception e) {
             Log.e("Websocket", "============> URI err: " + e.getMessage());
             return;
         }
-        Log.e("Websocket", "come on come on ===> ...");
+        Log.e("Websocket", "come on come on...");
 
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
