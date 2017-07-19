@@ -46,7 +46,7 @@
             android:title="@string/tree" />
 
         <item
-            android:id="@+id/nav_setting"
+            android:id="@+id/nav_logout"
             android:checked="false"
             android:icon="@drawable/logout24"
             android:title="@string/logout" />

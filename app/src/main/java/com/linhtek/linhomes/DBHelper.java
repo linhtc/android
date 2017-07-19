@@ -194,7 +194,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean checkDevice(String device_name) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "select device_name from devices where device_name = ? limit 1", new String[] { device_name } );
-        return (res.getCount() > 0) ? true : false;
+        if(res.getCount() > 0){
+            return true;
+        }
+        return false;
     }
 
 
@@ -238,4 +241,10 @@ public class DBHelper extends SQLiteOpenHelper {
         res.close();
         return array_list;
     }
+
+    public int deleteAllDevice() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("devices", "sty > ? ", new String[]{Integer.toString(0)});
+    }
+
 }

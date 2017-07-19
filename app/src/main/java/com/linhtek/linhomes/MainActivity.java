@@ -118,11 +118,14 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.commit();
                         return true;
                     }
-                    case R.id.nav_setting: {
-                        HomeFragment fragment = new HomeFragment();
-                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragment);
-                        fragmentTransaction.commit();
+                    case R.id.nav_logout: {
+                        DBHelper db = new DBHelper(getBaseContext());
+                        Log.e("MainActivity", "============> updateUser ACTIVE_PHONE_USER");
+                        db.updateUser(ACTIVE_PHONE_USER, 0, 0);
+                        db.deleteAllDevice();
+                        logging = true;
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_SIGNUP);
                         return true;
                     }
                     case R.id.nav_tree: {

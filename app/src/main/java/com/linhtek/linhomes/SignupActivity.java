@@ -91,7 +91,7 @@ public class SignupActivity extends AppCompatActivity {
 
         String mobile = _mobileText.getText().toString();
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("users/"+mobile);
+        myRef = database.getReference("users/"+mobile+"/info");
         mListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -79,23 +79,18 @@ public class LoginActivity extends AppCompatActivity {
                 try{
                     if(dataSnapshot.hasChildren()){
                         for(DataSnapshot child : dataSnapshot.getChildren() ){
-                            if(child.hasChild("name") && child.hasChild("phone") && child.hasChild("pw")){
-                                if(!db.checkExistUser(child.child("phone").getValue().toString())){
-                                    String childName = child.child("name").getValue().toString();
-                                    String childPhone = child.child("phone").getValue().toString();
-                                    String childPw = child.child("pw").getValue().toString();
-                                    Log.e("FCM", "response insertUser ==========> "+childPhone);
-                                    db.insertUser(childName, childPhone, childPw, 0);
+                            if(child.hasChild("info")){
+                                if(child.child("info").hasChild("name") && child.child("info").hasChild("phone") &&
+                                        child.child("info").hasChild("pw")){
+                                    if(!db.checkExistUser(child.child("info").child("phone").getValue().toString())){
+                                        String childName = child.child("info").child("name").getValue().toString();
+                                        String childPhone = child.child("info").child("phone").getValue().toString();
+                                        String childPw = child.child("info").child("pw").getValue().toString();
+                                        Log.e("FCM", "response insertUser ==========> "+childPhone);
+                                        db.insertUser(childName, childPhone, childPw, 0);
+                                    }
                                 }
                             }
-//                            if(child.hasChild("devices")){
-//                                for(DataSnapshot device : child.child("devices").getChildren() ){
-//                                    Log.e("FCM", "response device ==========> "+device.getKey());
-//                                    if(!db.checkExistDevice(device.getKey())){
-//                                        Log.e("FCM", "response insertDevice ==========> "+device.getKey());
-//                                    }
-//                                }
-//                            }
                         }
                     }
                     Log.e("FCM", "response dataSnapshot ==========> "+dataSnapshot.getValue().toString());

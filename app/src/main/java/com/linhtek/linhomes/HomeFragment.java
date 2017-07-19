@@ -72,8 +72,8 @@ public class HomeFragment extends Fragment {
         Cursor activeUser = db.getActiveUser();
         if(activeUser.getCount() > 0){
             if(activeUser.moveToFirst()){
-                Integer sync = activeUser.getInt(activeUser.getColumnIndex("syn"));
-                if(sync < 1){
+//                Integer sync = activeUser.getInt(activeUser.getColumnIndex("syn"));
+//                if(sync < 1){
                     phone = activeUser.getString(activeUser.getColumnIndex("phone"));
                     ((MainActivity) getActivity()).ACTIVE_PHONE_USER = phone;
                     database = FirebaseDatabase.getInstance();
@@ -87,13 +87,16 @@ public class HomeFragment extends Fragment {
                                         Log.e("FCM", "response device ==========> "+device.toString());
                                         if(!db.checkExistIdentifyDevice(device.getKey())){
                                             flagRm = true;
-                                            Log.e("FCM", "response insertDevice ==========> "+device.getKey());
+                                            Log.e("FCM", "response device.getKey() ==========> "+device.getKey());
                                             String cn = device.child("cn").getValue().toString();
                                             String wi = device.child("wi").getValue().toString();
                                             String ws = device.child("ws").getValue().toString();
                                             Long sta = (Long) device.child("sta").getValue();
                                             Long sty = (Long) device.child("sty").getValue();
-                                            db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                                            if(!db.checkDevice(device.getKey())){
+                                                Log.e("FCM", "response insertDevice ==========> "+device.getKey());
+                                                db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                                            }
                                         }
                                     }
                                     myRef.removeEventListener(mListener);
@@ -113,7 +116,7 @@ public class HomeFragment extends Fragment {
                         }
                     };
                     myRef.addValueEventListener(mListener);
-                }
+//                }
             }
         }
         activeUser.close();
