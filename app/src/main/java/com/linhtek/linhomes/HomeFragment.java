@@ -96,6 +96,9 @@ public class HomeFragment extends Fragment {
                                             if(!db.checkDevice(device.getKey())){
                                                 Log.e("FCM", "response insertDevice ==========> "+device.getKey());
                                                 db.insertDevice(ws, wi, device.getKey(), cn, sta.intValue(), sty.intValue());
+                                            } else{
+                                                Log.e("FCM", "response updateDevice ==========> "+device.getKey());
+                                                db.updateDevice(device.getKey(), cn, ws, wi, sty.intValue(), sta.intValue());
                                             }
                                         }
                                     }

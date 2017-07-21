@@ -75,7 +75,7 @@ public class DeviceFragment extends Fragment {
     boolean flagReconnect = false;
     boolean flagConnected = false;
     boolean flagWSconnected = false;
-    String styString = "switch";
+    String styString = "switches/";
     DBHelper db;
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -104,7 +104,7 @@ public class DeviceFragment extends Fragment {
             customName = bundle.getString("custom_name");
         }
         if(style == 1){
-            styString = "switchs/";
+            styString = "switches/";
         }
         Log.e("Websocket", "============> customName: " + customName);
 //        tvCustomName = (TextView)v.findViewById(R.id.custom_name);
@@ -118,14 +118,17 @@ public class DeviceFragment extends Fragment {
             state = device.getInt(device.getColumnIndex("sta"));
             style = device.getInt(device.getColumnIndex("sty"));
             deviceIP = device.getString(device.getColumnIndex("wi"));
-            deviceID = device.getString(device.getColumnIndex("fcm"));
+            deviceID = device.getString(device.getColumnIndex("device_name"));
             deviceName = device.getString(device.getColumnIndex("device_name"));
             deviceSSID = device.getString(device.getColumnIndex("ws"));
             Log.e("Websocket", "============> deviceName: " + deviceName);
             Log.e("Websocket", "============> deviceIP: " + deviceIP);
             Log.e("Websocket", "============> deviceID: " + deviceID);
             Log.e("Websocket", "============> deviceSSID: " + deviceSSID);
+            Log.e("Websocket", "============> style: " + style);
         }
+        Log.e("Websocket", "============> style: " + style);
+        Log.e("Websocket", "============> styString: " + styString);
         device.close();
 
 //        ((MainActivity) getActivity()).setActionBarTitle("DEVICE INFO");
